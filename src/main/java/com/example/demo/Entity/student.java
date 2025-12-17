@@ -3,6 +3,8 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 @entity
 public class student{
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
     private String name;
     private String email;
