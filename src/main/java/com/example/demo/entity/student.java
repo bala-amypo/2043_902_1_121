@@ -5,13 +5,13 @@ import jakarta.persistence.*;
 public class student{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String name;
     private String email;
     public int getId(){
         return id;
     }
-    public void setId(int id){
+    public void setId(Integer id){
         this.id=id;
     }
     public String getName(){
