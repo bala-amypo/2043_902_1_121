@@ -4,6 +4,6 @@ import org.springframework.web.blind.annotation.*;
 public class basics{
     @GetMapping("/home")
     public String name(){
-        return "Hellow world";
+        return "Hello world";
     }
 }
