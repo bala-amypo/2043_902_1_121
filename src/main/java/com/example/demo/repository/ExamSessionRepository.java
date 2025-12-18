@@ -1,1 +1,3 @@
-public class E
+public class ExamSessionRepository{
+    
+}
