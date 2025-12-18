@@ -4,10 +4,9 @@ import com.example.demo.exception.ApiException;
 import com.example.demo.model.ExamRoom;
 import com.example.demo.repository.ExamRoomRepository;
 import com.example.demo.service.ExamRoomService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import org.springframework.stereotype.Service;
 
 @Service
 public class ExamRoomServiceImpl implements ExamRoomService {
@@ -21,10 +20,15 @@ public class ExamRoomServiceImpl implements ExamRoomService {
     @Override
     public ExamRoom addRoom(ExamRoom room) {
 
-        if (examRoomRepository.findByRoomNumber(room.getRoomNumber()) != null) {
-            throw new ApiException("exists");
+        if (room.getRows() <= 0 || room.getColumns() <= 0) {
+            throw new ApiException("invalid room size");
         }
 
+        if (examRoomRepository.findByRoomNumber(room.getRoomNumber()).isPresent()) {
+            throw new ApiException("room already exists");
+        }
+
+        // capacity auto-calculated by entity
         return examRoomRepository.save(room);
     }
 
