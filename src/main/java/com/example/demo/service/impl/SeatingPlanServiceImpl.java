@@ -1,17 +1,13 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ApiException;
-import com.example.demo.model.ExamRoom;
-import com.example.demo.model.ExamSession;
-import com.example.demo.model.SeatingPlan;
-import com.example.demo.repository.ExamRoomRepository;
-import com.example.demo.repository.ExamSessionRepository;
-import com.example.demo.repository.SeatingPlanRepository;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.SeatingPlanService;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class SeatingPlanServiceImpl implements SeatingPlanService {
@@ -20,6 +16,7 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
     private final SeatingPlanRepository seatingPlanRepository;
     private final ExamRoomRepository examRoomRepository;
 
+    // ⚠ EXACT constructor order
     public SeatingPlanServiceImpl(ExamSessionRepository examSessionRepository,
                                   SeatingPlanRepository seatingPlanRepository,
                                   ExamRoomRepository examRoomRepository) {
@@ -40,17 +37,31 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
                 examRoomRepository.findByCapacityGreaterThanEqual(studentCount);
 
         if (rooms.isEmpty()) {
-            throw new ApiException("no room");
+            throw new ApiException("no room available");
         }
 
         ExamRoom room = rooms.get(0);
 
-        SeatingPlan plan = new SeatingPlan();
-        plan.setExamSession(session);
-        plan.setRoom(room);
-        plan.setArrangementJson("AUTO_GENERATED");
+        Map<String, String> arrangement = new LinkedHashMap<>();
+        int seat = 1;
+        for (Student s : session.getStudents()) {
+            arrangement.put("Seat-" + seat++, s.getRollNumber());
+        }
 
-        return seatingPlanRepository.save(plan);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(arrangement);
+
+            SeatingPlan plan = new SeatingPlan();
+            plan.setExamSession(session);
+            plan.setRoom(room);
+            plan.setArrangementJson(json);
+
+            return seatingPlanRepository.save(plan);
+
+        } catch (Exception e) {
+            throw new ApiException("failed to generate plan");
+        }
     }
 
     @Override
