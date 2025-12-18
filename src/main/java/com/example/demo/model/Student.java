@@ -1,22 +1,18 @@
-// public class Student{
-
-//}
 package com.example.demo.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "students", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "rollNumber")
+})
 public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String rollNumber;
 
     private String name;
@@ -25,43 +21,27 @@ public class Student {
 
     private Integer year;
 
-    public Long getId() {
-        return id;
-    }
+    public Student() {}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // getters and setters
 
-    public String getRollNumber() {
-        return rollNumber;
-    }
+    public Long getId() { return id; }
 
-    public void setRollNumber(String rollNumber) {
-        this.rollNumber = rollNumber;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getRollNumber() { return rollNumber; }
 
-    public String getDepartment() {
-        return department;
-    }
-    
-    public void setDepartment(String department) {
-        this.department = department;
-    }
+    public void setRollNumber(String rollNumber) { this.rollNumber = rollNumber; }
 
-    public Integer getYear() {
-        return year;
-    }
-    
-    public void setYear(Integer year) {
-        this.year = year;
-    }
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
+    public String getDepartment() { return department; }
+
+    public void setDepartment(String department) { this.department = department; }
+
+    public Integer getYear() { return year; }
+
+    public void setYear(Integer year) { this.year = year; }
 }

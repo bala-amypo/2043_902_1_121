@@ -1,19 +1,11 @@
-// public class ExamSession{
-
-//}
-
 package com.example.demo.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import java.util.Set;
 
 @Entity
+@Table(name = "exam_sessions")
 public class ExamSession {
 
     @Id
@@ -27,45 +19,34 @@ public class ExamSession {
     private String examTime;
 
     @ManyToMany
-    private List<Student> students;
+    @JoinTable(
+            name = "exam_session_students",
+            joinColumns = @JoinColumn(name = "session_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private Set<Student> students;
 
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public ExamSession() {}
 
-    public String getCourseCode() {
-        return courseCode;
-    }
-    
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
+    // getters and setters
 
-    public LocalDate getExamDate() {
-        return examDate;
-    }
-    
-    public void setExamDate(LocalDate examDate) {
-        this.examDate = examDate;
-    }
+    public Long getId() { return id; }
 
-    public String getExamTime() {
-        return examTime;
-    }
-    
-    public void setExamTime(String examTime) {
-        this.examTime = examTime;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public List<Student> getStudents() {
-        return students;
-    }
-    
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
+    public String getCourseCode() { return courseCode; }
+
+    public void setCourseCode(String courseCode) { this.courseCode = courseCode; }
+
+    public LocalDate getExamDate() { return examDate; }
+
+    public void setExamDate(LocalDate examDate) { this.examDate = examDate; }
+
+    public String getExamTime() { return examTime; }
+
+    public void setExamTime(String examTime) { this.examTime = examTime; }
+
+    public Set<Student> getStudents() { return students; }
+
+    public void setStudents(Set<Student> students) { this.students = students; }
 }
