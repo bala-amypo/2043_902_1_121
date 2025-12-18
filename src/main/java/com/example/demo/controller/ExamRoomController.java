@@ -1,33 +1,31 @@
-// public class ExamRoomController{
-
-// }
-
 package com.example.demo.controller;
 
 import com.example.demo.model.ExamRoom;
 import com.example.demo.service.ExamRoomService;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rooms")
 public class ExamRoomController {
 
-    private final ExamRoomService examRoomService;
+    private final ExamRoomService service;
 
-    public ExamRoomController(ExamRoomService examRoomService) {
-        this.examRoomService = examRoomService;
+    public ExamRoomController(ExamRoomService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ExamRoom addRoom(@RequestBody ExamRoom room) {
-        return examRoomService.addRoom(room);
+    @Operation(summary = "Add exam room")
+    public ExamRoom add(@RequestBody ExamRoom room) {
+        return service.addRoom(room);
     }
 
     @GetMapping
-    public List<ExamRoom> getAllRooms() {
-        return examRoomService.getAllRooms();
+    @Operation(summary = "List rooms")
+    public List<ExamRoom> list() {
+        return service.getAllRooms();
     }
 }

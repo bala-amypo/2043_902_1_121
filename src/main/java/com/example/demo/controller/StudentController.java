@@ -1,15 +1,11 @@
-// public class StudentController{
-
-// }
-
 package com.example.demo.controller;
 
 import com.example.demo.model.Student;
 import com.example.demo.service.StudentService;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/students")
@@ -22,12 +18,14 @@ public class StudentController {
     }
 
     @PostMapping
-    public Student addStudent(@RequestBody Student student) {
+    @Operation(summary = "Add student")
+    public Student add(@RequestBody Student student) {
         return studentService.addStudent(student);
     }
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    @Operation(summary = "List students")
+    public List<Student> list() {
         return studentService.getAllStudents();
     }
 }
