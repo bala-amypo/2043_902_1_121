@@ -16,7 +16,6 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
     private final SeatingPlanRepository seatingPlanRepository;
     private final ExamRoomRepository examRoomRepository;
 
-    // ⚠ EXACT constructor order
     public SeatingPlanServiceImpl(ExamSessionRepository examSessionRepository,
                                   SeatingPlanRepository seatingPlanRepository,
                                   ExamRoomRepository examRoomRepository) {
@@ -25,6 +24,7 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
         this.examRoomRepository = examRoomRepository;
     }
 
+    // CREATE ---------------------------------------------------------
     @Override
     public SeatingPlan generatePlan(Long sessionId) {
 
@@ -32,7 +32,6 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
                 .orElseThrow(() -> new ApiException("session not found"));
 
         int studentCount = session.getStudents().size();
-
         List<ExamRoom> rooms =
                 examRoomRepository.findByCapacityGreaterThanEqual(studentCount);
 
@@ -64,6 +63,7 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
         }
     }
 
+    // READ ---------------------------------------------------------
     @Override
     public SeatingPlan getPlan(Long planId) {
         return seatingPlanRepository.findById(planId)
@@ -73,5 +73,38 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
     @Override
     public List<SeatingPlan> getPlansBySession(Long sessionId) {
         return seatingPlanRepository.findByExamSessionId(sessionId);
+    }
+
+    @Override
+    public List<SeatingPlan> getAllPlans() {
+        return seatingPlanRepository.findAll();
+    }
+
+    // UPDATE ---------------------------------------------------------
+    @Override
+    public SeatingPlan updatePlan(Long planId, SeatingPlan updated) {
+        SeatingPlan existing = getPlan(planId);
+
+        if (updated.getArrangementJson() != null)
+            existing.setArrangementJson(updated.getArrangementJson());
+
+        if (updated.getRoom() != null)
+            existing.setRoom(updated.getRoom());
+
+        return seatingPlanRepository.save(existing);
+    }
+
+    // DELETE ---------------------------------------------------------
+    @Override
+    public void deletePlan(Long planId) {
+        if (!seatingPlanRepository.existsById(planId)) {
+            throw new ApiException("plan not found");
+        }
+        seatingPlanRepository.deleteById(planId);
+    }
+
+    @Override
+    public void deletePlansBySession(Long sessionId) {
+        seatingPlanRepository.deleteByExamSessionId(sessionId);
     }
 }

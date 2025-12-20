@@ -1,20 +1,29 @@
-
-
 package com.example.demo.service;
 
-import com.example.demo.model.Student;
+import com.example.demo.model.SeatingPlan;
+
 import java.util.List;
 
-public interface StudentService {
+public interface SeatingPlanService {
 
-    Student addStudent(Student student);
+    // CREATE — generate a seating plan
+    SeatingPlan generatePlan(Long sessionId);
 
-    List<Student> getAllStudents();
-    
-    //other opeartions
-    Student getStudentById(Long id);
+    // READ — get plan by ID
+    SeatingPlan getPlan(Long planId);
 
-    Student updateStudent(Long id, Student updatedStudent);
+    // READ — list plans of a session
+    List<SeatingPlan> getPlansBySession(Long sessionId);
 
-    void deleteStudent(Long id);
+    // READ — get all seating plans
+    List<SeatingPlan> getAllPlans();
+
+    // UPDATE — edit seating plan manually
+    SeatingPlan updatePlan(Long planId, SeatingPlan updated);
+
+    // DELETE — delete plan by ID
+    void deletePlan(Long planId);
+
+    // DELETE — delete all plans of a session
+    void deletePlansBySession(Long sessionId);
 }
