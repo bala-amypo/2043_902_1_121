@@ -17,33 +17,35 @@ public class SeatingPlanController {
         this.service = service;
     }
 
-    // CREATE ---------------------------------------------------------
+    // CREATE
     @PostMapping("/generate/{sessionId}")
     @Operation(summary = "Generate seating plan")
     public SeatingPlan generate(@PathVariable Long sessionId) {
         return service.generatePlan(sessionId);
     }
 
-    // READ ---------------------------------------------------------
+    // READ (one)
     @GetMapping("/{planId}")
     @Operation(summary = "Get seating plan by ID")
     public SeatingPlan get(@PathVariable Long planId) {
         return service.getPlan(planId);
     }
 
+    // READ (session)
     @GetMapping("/session/{sessionId}")
     @Operation(summary = "Get all seating plans of a session")
     public List<SeatingPlan> list(@PathVariable Long sessionId) {
         return service.getPlansBySession(sessionId);
     }
 
+    // READ (all)
     @GetMapping
     @Operation(summary = "Get all seating plans")
     public List<SeatingPlan> listAll() {
         return service.getAllPlans();
     }
 
-    // UPDATE ---------------------------------------------------------
+    // UPDATE
     @PutMapping("/{planId}")
     @Operation(summary = "Update seating plan")
     public SeatingPlan update(@PathVariable Long planId,
@@ -51,7 +53,7 @@ public class SeatingPlanController {
         return service.updatePlan(planId, updated);
     }
 
-    // DELETE ---------------------------------------------------------
+    // DELETE (one)
     @DeleteMapping("/{planId}")
     @Operation(summary = "Delete seating plan by ID")
     public String delete(@PathVariable Long planId) {
@@ -59,6 +61,7 @@ public class SeatingPlanController {
         return "deleted";
     }
 
+    // DELETE (session)
     @DeleteMapping("/session/{sessionId}")
     @Operation(summary = "Delete all plans of a session")
     public String deleteBySession(@PathVariable Long sessionId) {
