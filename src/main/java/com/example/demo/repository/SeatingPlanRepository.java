@@ -8,4 +8,6 @@ import java.util.List;
 public interface SeatingPlanRepository extends JpaRepository<SeatingPlan, Long> {
 
     List<SeatingPlan> findByExamSessionId(Long sessionId);
+
+    void deleteByExamSessionId(Long sessionId);
 }
