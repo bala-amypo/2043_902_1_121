@@ -17,6 +17,7 @@ public class ExamRoomServiceImpl implements ExamRoomService {
         this.examRoomRepository = examRoomRepository;
     }
 
+    // CREATE --------------------------------------------------
     @Override
     public ExamRoom addRoom(ExamRoom room) {
 
@@ -28,12 +29,58 @@ public class ExamRoomServiceImpl implements ExamRoomService {
             throw new ApiException("room already exists");
         }
 
-        // capacity auto-calculated by entity
         return examRoomRepository.save(room);
+    }
+
+    // READ ----------------------------------------------------
+    @Override
+    public ExamRoom getRoom(Long id) {
+        return examRoomRepository.findById(id)
+                .orElseThrow(() -> new ApiException("room not found"));
     }
 
     @Override
     public List<ExamRoom> getAllRooms() {
         return examRoomRepository.findAll();
+    }
+
+    // UPDATE ---------------------------------------------------
+    @Override
+    public ExamRoom updateRoom(Long id, ExamRoom updated) {
+
+        ExamRoom existing = getRoom(id);
+
+        if (updated.getRoomNumber() != null)
+            existing.setRoomNumber(updated.getRoomNumber());
+
+        if (updated.getRows() != null)
+            existing.setRows(updated.getRows());
+
+        if (updated.getColumns() != null)
+            existing.setColumns(updated.getColumns());
+
+        return examRoomRepository.save(existing);
+    }
+
+    // DELETE ---------------------------------------------------
+    @Override
+    public void deleteRoom(Long id) {
+        if (!examRoomRepository.existsById(id)) {
+            throw new ApiException("room not found");
+        }
+        examRoomRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteByRoomNumber(String roomNumber) {
+        ExamRoom room = examRoomRepository.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new ApiException("room not found"));
+
+        examRoomRepository.delete(room);
+    }
+
+    @Override
+    public void deleteAllRooms() {
+        examRoomRepository.deleteAll();
     }
 }
