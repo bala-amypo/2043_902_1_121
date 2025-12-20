@@ -12,11 +12,14 @@ public class ExamSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String courseCode;
+    @Column(nullable = false)
+    private String examName;
 
+    @Column(nullable = false)
     private LocalDate examDate;
 
-    private String examTime;
+    @Column(nullable = false)
+    private Integer durationMinutes;
 
     @ManyToMany
     @JoinTable(
@@ -24,29 +27,24 @@ public class ExamSession {
             joinColumns = @JoinColumn(name = "session_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
-    private Set<Student> students;
+    private Set<Student> students; // REQUIRED by your service
 
     public ExamSession() {}
 
-    // getters and setters
+    // ---- Getters & Setters ----
 
     public Long getId() { return id; }
-
     public void setId(Long id) { this.id = id; }
 
-    public String getCourseCode() { return courseCode; }
-
-    public void setCourseCode(String courseCode) { this.courseCode = courseCode; }
+    public String getExamName() { return examName; }
+    public void setExamName(String examName) { this.examName = examName; }
 
     public LocalDate getExamDate() { return examDate; }
-
     public void setExamDate(LocalDate examDate) { this.examDate = examDate; }
 
-    public String getExamTime() { return examTime; }
-
-    public void setExamTime(String examTime) { this.examTime = examTime; }
+    public Integer getDurationMinutes() { return durationMinutes; }
+    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
 
     public Set<Student> getStudents() { return students; }
-
     public void setStudents(Set<Student> students) { this.students = students; }
 }
