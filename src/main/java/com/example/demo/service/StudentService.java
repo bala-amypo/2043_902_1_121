@@ -1,7 +1,8 @@
+
+
 package com.example.demo.service;
 
 import com.example.demo.model.Student;
-
 import java.util.List;
 
 public interface StudentService {
@@ -9,4 +10,11 @@ public interface StudentService {
     Student addStudent(Student student);
 
     List<Student> getAllStudents();
+    
+    //other opeartions
+    Student getStudentById(Long id);
+
+    Student updateStudent(Long id, Student updatedStudent);
+
+    void deleteStudent(Long id);
 }
