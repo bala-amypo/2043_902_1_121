@@ -17,15 +17,11 @@ public class ExamSessionController {
     public ExamSessionController(ExamSessionService service) {
         this.service = service;
     }
-
-    // CREATE ---------------------------------------------------------
     @PostMapping
     @Operation(summary = "Create exam session")
     public ExamSession create(@RequestBody ExamSession session) {
         return service.createSession(session);
     }
-
-    // READ ---------------------------------------------------------
     @GetMapping("/{id}")
     @Operation(summary = "Get exam session by ID")
     public ExamSession get(@PathVariable Long id) {
