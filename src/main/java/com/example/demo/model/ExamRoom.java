@@ -3,7 +3,7 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "exam_room") // 🔒 lock table name
+@Table(name = "exam_room")
 public class ExamRoom {
 
     @Id
@@ -26,23 +26,44 @@ public class ExamRoom {
 
     @PrePersist
     public void calculateCapacity() {
+        ensureCapacityMatches();
+    }
+
+    // getters & setters
+    public Long getId(){ return id; }
+    public void setId(Long id){ this.id = id; }
+
+    public String getRoomNumber(){ return roomNumber; }
+    public void setRoomNumber(String roomNumber){ this.roomNumber = roomNumber; }
+
+    public Integer getRows(){ return rows; }
+    public void setRows(Integer rows){ this.rows = rows; }
+
+    public Integer getColumns(){ return columns; }
+    public void setColumns(Integer columns){ this.columns = columns; }
+
+    public Integer getCapacity(){ return capacity; }
+    public void setCapacity(Integer capacity){ this.capacity = capacity; }
+
+    // ✅ Tests expect this
+    public void ensureCapacityMatches() {
         if (rows != null && columns != null) {
-            capacity = rows * columns;
+            this.capacity = rows * columns;
         }
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // ✅ Builder expected by tests
+    public static Builder builder(){ return new Builder(); }
 
-    public String getRoomNumber() { return roomNumber; }
-    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+    public static class Builder {
+        private final ExamRoom r = new ExamRoom();
 
-    public Integer getRows() { return rows; }
-    public void setRows(Integer rows) { this.rows = rows; }
+        public Builder id(Long v){ r.id = v; return this; }
+        public Builder roomNumber(String v){ r.roomNumber = v; return this; }
+        public Builder rows(Integer v){ r.rows = v; return this; }
+        public Builder columns(Integer v){ r.columns = v; return this; }
+        public Builder capacity(Integer v){ r.capacity = v; return this; }
 
-    public Integer getColumns() { return columns; }
-    public void setColumns(Integer columns) { this.columns = columns; }
-
-    public Integer getCapacity() { return capacity; }
-    public void setCapacity(Integer capacity) { this.capacity = capacity; }
+        public ExamRoom build(){ return r; }
+    }
 }
