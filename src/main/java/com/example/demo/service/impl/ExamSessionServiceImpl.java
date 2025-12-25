@@ -6,14 +6,19 @@ import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.ExamSessionService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 public class ExamSessionServiceImpl implements ExamSessionService {
 
     private final ExamSessionRepository repo;
     private final StudentRepository studentRepo;
 
-    public ExamSessionServiceImpl(ExamSessionRepository repo,
-                                  StudentRepository studentRepo) {
+    public ExamSessionServiceImpl(
+            ExamSessionRepository repo,
+            StudentRepository studentRepo
+    ) {
         this.repo = repo;
         this.studentRepo = studentRepo;
     }
@@ -26,5 +31,17 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     @Override
     public ExamSession getSession(Long id) {
         return repo.findById(id).orElse(null);
+    }
+
+    // ✅ THIS METHOD IS REQUIRED BY TESTS
+    @Override
+    public List<ExamSession> getSessionsByDate(LocalDate date) {
+        return repo.findByExamDate(date);
+    }
+
+    // ✅ Safe fallback (some tests use findAll)
+    @Override
+    public List<ExamSession> getAllSessions() {
+        return repo.findAll();
     }
 }
