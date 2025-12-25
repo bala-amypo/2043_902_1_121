@@ -28,9 +28,7 @@ public class AuthController {
         u.setName(req.name);
         u.setEmail(req.email);
         u.setPassword(req.password);
-
-        // ✅ REQUIRED — fixes 500 error
-        u.setRole("STAFF");
+        u.setRole("STAFF");   // required
 
         return ResponseEntity.ok(service.register(u));
     }
@@ -44,10 +42,16 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
 
+        // ✅ ABSOLUTE FIX — prevent 500
+        String role = user.getRole();
+        if (role == null || role.isBlank()) {
+            role = "STAFF";
+        }
+
         String token = jwtTokenProvider.generateToken(
                 user.getId(),
                 user.getEmail(),
-                user.getRole()
+                role
         );
 
         AuthResponse res = new AuthResponse();
