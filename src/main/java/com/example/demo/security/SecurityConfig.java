@@ -15,14 +15,21 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // VERY IMPORTANT: allow all requests (tests + swagger)
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+            // ❌ disable csrf
             .csrf(csrf -> csrf.disable())
+
+            // ❌ disable default login mechanisms (THIS WAS MISSING)
+            .httpBasic(httpBasic -> httpBasic.disable())
+            .formLogin(form -> form.disable())
+
+            // ✅ allow everything
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                        "/auth/**",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html"

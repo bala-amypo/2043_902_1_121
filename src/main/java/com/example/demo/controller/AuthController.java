@@ -7,6 +7,7 @@ import com.example.demo.model.User;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,10 +16,16 @@ public class AuthController {
 
     private final UserService service;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserService service, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(
+            UserService service,
+            JwtTokenProvider jwtTokenProvider,
+            PasswordEncoder passwordEncoder
+    ) {
         this.service = service;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
@@ -28,7 +35,7 @@ public class AuthController {
         u.setName(req.name);
         u.setEmail(req.email);
         u.setPassword(req.password);
-        u.setRole("STAFF");   // required
+        u.setRole("STAFF"); // mandatory
 
         return ResponseEntity.ok(service.register(u));
     }
@@ -42,11 +49,14 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
 
-        // ✅ ABSOLUTE FIX — prevent 500
-        String role = user.getRole();
-        if (role == null || role.isBlank()) {
-            role = "STAFF";
+        // ✅ CRITICAL FIX — password validation
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).build();
         }
+
+        String role = (user.getRole() == null || user.getRole().isBlank())
+                ? "STAFF"
+                : user.getRole();
 
         String token = jwtTokenProvider.generateToken(
                 user.getId(),
