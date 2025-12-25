@@ -10,12 +10,23 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final Key key = Keys.hmacShaKeyFor(
-            "THIS_IS_A_256_BIT_SECRET_KEY_FOR_JWT_AUTHENTICATION"
-                    .getBytes()
-    );
+    private Key key;
+    private long EXPIRATION;
 
-    private final long EXPIRATION = 24 * 60 * 60 * 1000; // 1 day
+    // ✅ REQUIRED BY TESTCASES
+    public JwtTokenProvider(String secret, int expirySeconds) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.EXPIRATION = expirySeconds * 1000L;
+    }
+
+    // ✅ REQUIRED BY SPRING
+    public JwtTokenProvider() {
+        this.key = Keys.hmacShaKeyFor(
+                "THIS_IS_A_256_BIT_SECRET_KEY_FOR_JWT_AUTHENTICATION"
+                        .getBytes()
+        );
+        this.EXPIRATION = 24 * 60 * 60 * 1000;
+    }
 
     public String generateToken(Long userId, String email, String role) {
 

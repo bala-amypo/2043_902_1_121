@@ -2,11 +2,18 @@ package com.example.demo.dto;
 
 public class RegisterRequest {
 
-    public String name;
-    public String email;
-    public String password;
+    private String name;
+    private String email;
+    private String password;
+    private String role;   // ✅ REQUIRED BY TESTS
 
     public RegisterRequest() {}
+
+    // ✅ GETTERS (important for controllers & tests)
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getPassword() { return password; }
+    public String getRole() { return role; }
 
     public static Builder builder() {
         return new Builder();
@@ -27,6 +34,12 @@ public class RegisterRequest {
 
         public Builder password(String password) {
             r.password = password;
+            return this;
+        }
+
+        // ✅ THIS FIXES MANY FAILURES
+        public Builder role(String role) {
+            r.role = role;
             return this;
         }
 
