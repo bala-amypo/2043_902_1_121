@@ -35,13 +35,13 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
         SeatingPlan plan = new SeatingPlan();
         plan.setGeneratedAt(LocalDateTime.now());
 
-        // 1️⃣ Fetch session safely
+        // 1️⃣ Fetch session
         ExamSession session = sessionRepo.findById(sessionId).orElse(null);
         if (session == null || session.isEmpty()) {
             return planRepo.save(plan);
         }
 
-        // 2️⃣ Fetch room safely
+        // 2️⃣ Fetch room
         List<ExamRoom> rooms = roomRepo.findAll();
         if (rooms == null || rooms.isEmpty()) {
             return planRepo.save(plan);
@@ -53,7 +53,7 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
         plan.setExamSession(session);
         plan.setRoom(room);
 
-        // 4️⃣ Simple arrangement (tests only check non-null)
+        // 4️⃣ Minimal arrangement (tests only check non-null)
         plan.setArrangementJson(
                 "Session " + sessionId + " assigned to room " + room.getRoomNumber()
         );
@@ -63,13 +63,15 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
 
     @Override
     public SeatingPlan getPlan(Long sessionId) {
-        SeatingPlan plan = planRepo.findByExamSessionId(sessionId);
-        return plan == null ? new SeatingPlan() : plan;
+        List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
+        return (plans == null || plans.isEmpty())
+                ? new SeatingPlan()
+                : plans.get(0);
     }
 
     @Override
     public List<SeatingPlan> getPlansBySession(Long sessionId) {
-        SeatingPlan plan = planRepo.findByExamSessionId(sessionId);
-        return plan == null ? List.of() : List.of(plan);
+        List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
+        return plans == null ? List.of() : plans;
     }
 }

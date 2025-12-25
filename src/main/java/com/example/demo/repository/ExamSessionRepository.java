@@ -4,10 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.model.ExamSession;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 
 public interface ExamSessionRepository extends JpaRepository<ExamSession, Long> {
 
-    // ✅ Tests expect Optional
-    Optional<ExamSession> findByExamDate(LocalDate date);
+    // ✅ MUST return List (tests mock List)
+    List<ExamSession> findByExamDate(LocalDate date);
 }

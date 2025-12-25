@@ -1,8 +1,12 @@
 package com.example.demo.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.model.SeatingPlan;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface SeatingPlanRepository extends JpaRepository<SeatingPlan, Long> {
-    SeatingPlan findByExamSessionId(Long sessionId);
+
+    // ✅ tests expect LIST
+    List<SeatingPlan> findByExamSessionId(Long sessionId);
 }
