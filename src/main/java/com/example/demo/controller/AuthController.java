@@ -32,9 +32,9 @@ public class AuthController {
     public ResponseEntity<User> register(@RequestBody RegisterRequest req) {
 
         User u = new User();
-        u.setName(req.name);
-        u.setEmail(req.email);
-        u.setPassword(req.password);
+        u.setName(req.getName());
+        u.setEmail(req.getEmail());
+        u.setPassword(req.getPassword());
         u.setRole("STAFF"); // mandatory
 
         return ResponseEntity.ok(service.register(u));
