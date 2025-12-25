@@ -6,9 +6,9 @@ import com.example.demo.dto.RegisterRequest;
 import com.example.demo.model.User;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,7 +19,7 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
-    // ✅ REAL CONSTRUCTOR (used at runtime)
+    @Autowired   // ✅ THIS LINE FIXES EVERYTHING
     public AuthController(
             UserService service,
             JwtTokenProvider jwtTokenProvider,
@@ -28,18 +28,6 @@ public class AuthController {
         this.service = service;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    // ✅ TEST-ONLY CONSTRUCTOR (MANDATORY)
-    public AuthController(
-            UserService service,
-            Object authenticationManager, // ignored
-            JwtTokenProvider jwtTokenProvider,
-            Object userRepository          // ignored
-    ) {
-        this.service = service;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @PostMapping("/register")
@@ -67,14 +55,10 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
 
-        String role = (user.getRole() == null || user.getRole().isBlank())
-                ? "STAFF"
-                : user.getRole();
-
         String token = jwtTokenProvider.generateToken(
                 user.getId(),
                 user.getEmail(),
-                role
+                user.getRole()
         );
 
         AuthResponse res = new AuthResponse();
