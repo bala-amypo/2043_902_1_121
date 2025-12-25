@@ -19,14 +19,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // ❌ disable csrf
+            //  disable csrf
             .csrf(csrf -> csrf.disable())
 
-            // ❌ disable default login mechanisms (THIS WAS MISSING)
+            //  disable default login mechanisms (THIS WAS MISSING)
             .httpBasic(httpBasic -> httpBasic.disable())
             .formLogin(form -> form.disable())
 
-            // ✅ allow everything
+            //  allow everything
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/auth/**",
