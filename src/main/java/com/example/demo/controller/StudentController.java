@@ -22,8 +22,14 @@ public class StudentController {
         return ResponseEntity.ok(service.addStudent(s));
     }
 
+    // ✅ Existing REST endpoint (keep)
     @GetMapping
     public ResponseEntity<List<Student>> getAll() {
+        return ResponseEntity.ok(service.getAllStudents());
+    }
+
+    // ✅ REQUIRED by test suite
+    public ResponseEntity<List<Student>> list() {
         return ResponseEntity.ok(service.getAllStudents());
     }
 }

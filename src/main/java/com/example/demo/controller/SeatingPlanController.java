@@ -31,4 +31,9 @@ public class SeatingPlanController {
     public ResponseEntity<List<SeatingPlan>> getBySession(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
+
+    // ✅ REQUIRED BY TEST SUITE
+    public ResponseEntity<List<SeatingPlan>> list(Long sessionId) {
+        return ResponseEntity.ok(service.getPlansBySession(sessionId));
+    }
 }

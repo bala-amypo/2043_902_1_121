@@ -22,8 +22,14 @@ public class ExamRoomController {
         return ResponseEntity.ok(service.addRoom(r));
     }
 
+    // ✅ Existing endpoint (keep)
     @GetMapping
     public ResponseEntity<List<ExamRoom>> getAll() {
+        return ResponseEntity.ok(service.getAllRooms());
+    }
+
+    // ✅ REQUIRED by test suite
+    public ResponseEntity<List<ExamRoom>> list() {
         return ResponseEntity.ok(service.getAllRooms());
     }
 }
