@@ -1,9 +1,9 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "seating_plan")
 public class SeatingPlan {
 
     @Id
@@ -11,23 +11,44 @@ public class SeatingPlan {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "exam_session_id")
     private ExamSession examSession;
 
     @ManyToOne
+    @JoinColumn(name = "room_id")
     private ExamRoom room;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "arrangement_json")
     private String arrangementJson;
 
-    private LocalDateTime generatedAt;
+    public SeatingPlan() {}
 
-    @PrePersist
-    public void onCreate(){
-        generatedAt = LocalDateTime.now();
+    public Long getId() {
+        return id;
     }
 
-    public Long getId(){return id;}
-    public ExamSession getExamSession(){return examSession;}
-    public ExamRoom getRoom(){return room;}
-    public String getArrangementJson(){return arrangementJson;}
+    public ExamSession getExamSession() {
+        return examSession;
+    }
+
+    public void setExamSession(ExamSession examSession) {
+        this.examSession = examSession;
+    }
+
+    public ExamRoom getRoom() {
+        return room;
+    }
+
+    public void setRoom(ExamRoom room) {
+        this.room = room;
+    }
+
+    public String getArrangementJson() {
+        return arrangementJson;
+    }
+
+    public void setArrangementJson(String arrangementJson) {
+        this.arrangementJson = arrangementJson;
+    }
 }
