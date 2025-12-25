@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Student;
 import com.example.demo.service.StudentService;
-import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,42 +11,19 @@ import java.util.List;
 @RequestMapping("/students")
 public class StudentController {
 
-    private final StudentService studentService;
+    private final StudentService service;
 
-    public StudentController(StudentService studentService) {
-        this.studentService = studentService;
+    public StudentController(StudentService service) {
+        this.service = service;
     }
 
     @PostMapping
-    @Operation(summary = "Add student")
-    public Student add(@RequestBody Student student) {
-        return studentService.addStudent(student);
+    public ResponseEntity<Student> add(@RequestBody Student s) {
+        return ResponseEntity.ok(service.addStudent(s));
     }
 
     @GetMapping
-    @Operation(summary = "List students")
-    public List<Student> list() {
-        return studentService.getAllStudents();
-    }
-    
-
-    //other operations
-    @GetMapping("/{id}")
-    @Operation(summary = "Get student by ID")
-    public Student get(@PathVariable Long id) {
-        return studentService.getStudentById(id);
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "Update student")
-    public Student update(@PathVariable Long id, @RequestBody Student student) {
-        return studentService.updateStudent(id, student);
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Delete student")
-    public String delete(@PathVariable Long id) {
-        studentService.deleteStudent(id);
-        return "deleted";
+    public ResponseEntity<List<Student>> getAll() {
+        return ResponseEntity.ok(service.getAllStudents());
     }
 }
