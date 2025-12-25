@@ -2,43 +2,36 @@ package com.example.demo.dto;
 
 public class RegisterRequest {
 
-    private String name;
-    private String email;
-    private String password;
-    private String role;
+    public String name;
+    public String email;
+    public String password;
 
-    public RegisterRequest() {
+    public RegisterRequest() {}
+
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public String getName() {
-        return name;
-    }
+    public static class Builder {
+        private final RegisterRequest r = new RegisterRequest();
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public Builder name(String name) {
+            r.name = name;
+            return this;
+        }
 
-    public String getEmail() {
-        return email;
-    }
+        public Builder email(String email) {
+            r.email = email;
+            return this;
+        }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+        public Builder password(String password) {
+            r.password = password;
+            return this;
+        }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+        public RegisterRequest build() {
+            return r;
+        }
     }
 }

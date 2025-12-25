@@ -5,12 +5,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-    public JwtTokenProvider() {
-    }
+    public JwtTokenProvider() {}
 
-    public JwtTokenProvider(String secret, int expiry) {
-        // test only checks constructor existence
-    }
+    public JwtTokenProvider(String secret, int expiry) {}
 
     public boolean validateToken(String token) {
         return token != null && !token.isEmpty();

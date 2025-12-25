@@ -17,15 +17,18 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
 
-        // Security Scheme for Bearer Token
+        // Bearer token security scheme (this enables Authorize button)
         SecurityScheme bearerAuthScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
-                .bearerFormat("JWT");
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER)
+                .name("Authorization");
 
         return new OpenAPI()
+                // ✅ KEEP YOUR SERVER URL
                 .servers(List.of(
-                        new Server().url("https://9058.408procr.amypo.ai/")   // your server URL
+                        new Server().url("https://9058.408procr.amypo.ai/")
                 ))
                 .info(new Info()
                         .title("Your API Docs")
@@ -34,6 +37,7 @@ public class OpenApiConfig {
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth", bearerAuthScheme)
                 )
+                // ✅ THIS IS WHAT MAKES AUTHORIZE BUTTON APPEAR
                 .addSecurityItem(new SecurityRequirement()
                         .addList("bearerAuth")
                 );
