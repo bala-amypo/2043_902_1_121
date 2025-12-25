@@ -1,29 +1,25 @@
 package com.example.demo.service;
 
 import com.example.demo.model.ExamRoom;
+import com.example.demo.repository.ExamRoomRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public interface ExamRoomService {
+@Service
+public class ExamRoomService {
 
-    // CREATE
-    ExamRoom addRoom(ExamRoom room);
+    private final ExamRoomRepository repo;
 
-    // READ single room by ID
-    ExamRoom getRoom(Long id);
+    public ExamRoomService(ExamRoomRepository repo) {
+        this.repo = repo;
+    }
 
-    // READ all rooms
-    List<ExamRoom> getAllRooms();
+    public ExamRoom addRoom(ExamRoom room) {
+        return repo.save(room);
+    }
 
-    // UPDATE room details
-    ExamRoom updateRoom(Long id, ExamRoom updated);
-
-    // DELETE single room by ID
-    void deleteRoom(Long id);
-
-    // DELETE room by room number
-    void deleteByRoomNumber(String roomNumber);
-
-    // DELETE all rooms
-    void deleteAllRooms();
+    public List<ExamRoom> getAllRooms() {
+        return repo.findAll();
+    }
 }

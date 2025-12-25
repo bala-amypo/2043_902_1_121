@@ -1,27 +1,26 @@
 package com.example.demo.service;
 
 import com.example.demo.model.ExamSession;
+import com.example.demo.repository.ExamSessionRepository;
+import com.example.demo.repository.StudentRepository;
+import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
+@Service
+public class ExamSessionService {
 
-public interface ExamSessionService {
+    private final ExamSessionRepository repo;
+    private final StudentRepository studentRepo;
 
-    // CREATE session
-    ExamSession createSession(ExamSession session);
+    public ExamSessionService(ExamSessionRepository repo, StudentRepository studentRepo) {
+        this.repo = repo;
+        this.studentRepo = studentRepo;
+    }
 
-    // READ session by ID
-    ExamSession getSession(Long sessionId);
+    public ExamSession createSession(ExamSession session) {
+        return repo.save(session);
+    }
 
-    // READ all sessions
-    List<ExamSession> getAllSessions();
-
-    // UPDATE session details
-    ExamSession updateSession(Long sessionId, ExamSession updated);
-
-    // DELETE session by ID
-    void deleteSession(Long sessionId);
-
-    // DELETE all sessions on a given date
-    void deleteByDate(LocalDate date);
+    public ExamSession getSession(Long id) {
+        return repo.findById(id).orElse(null);
+    }
 }

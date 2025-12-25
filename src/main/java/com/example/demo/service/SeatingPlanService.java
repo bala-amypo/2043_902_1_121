@@ -1,28 +1,41 @@
 package com.example.demo.service;
 
 import com.example.demo.model.SeatingPlan;
+import com.example.demo.repository.ExamRoomRepository;
+import com.example.demo.repository.ExamSessionRepository;
+import com.example.demo.repository.SeatingPlanRepository;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-public interface SeatingPlanService {
+@Service
+public class SeatingPlanService {
 
-    // CREATE — generate a seating plan
-    SeatingPlan generatePlan(Long sessionId);
+    private final ExamSessionRepository sessionRepo;
+    private final SeatingPlanRepository planRepo;
+    private final ExamRoomRepository roomRepo;
 
-    // READ — get plan by ID
-    SeatingPlan getPlan(Long planId);
+    public SeatingPlanService(
+            ExamSessionRepository sessionRepo,
+            SeatingPlanRepository planRepo,
+            ExamRoomRepository roomRepo
+    ) {
+        this.sessionRepo = sessionRepo;
+        this.planRepo = planRepo;
+        this.roomRepo = roomRepo;
+    }
 
-    // READ — list plans of a session
-    List<SeatingPlan> getPlansBySession(Long sessionId);
+    public SeatingPlan generatePlan(Long sessionId) {
+        SeatingPlan plan = new SeatingPlan();
+        return planRepo.save(plan);
+    }
 
-    // READ — get all seating plans
-    List<SeatingPlan> getAllPlans();
+    public SeatingPlan getPlan(Long sessionId) {
+        return planRepo.findByExamSessionId(sessionId);
+    }
 
-    // UPDATE — edit seating plan manually
-    SeatingPlan updatePlan(Long planId, SeatingPlan updated);
-
-    // DELETE — delete plan by ID
-    void deletePlan(Long planId);
-
-    // DELETE — delete all plans of a session
-    void deletePlansBySession(Long sessionId);
+    public List<SeatingPlan> getPlansBySession(Long sessionId) {
+        SeatingPlan plan = planRepo.findByExamSessionId(sessionId);
+        return plan == null ? List.of() : List.of(plan);
+    }
 }
