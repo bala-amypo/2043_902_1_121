@@ -5,10 +5,11 @@ public class RegisterRequest {
     private String name;
     private String email;
     private String password;
+    private String role;   // ✅ REQUIRED BY TESTS
 
     public RegisterRequest() {}
 
-    // ✅ getters (required)
+    // ✅ getters (tests + controller use these)
     public String getName() {
         return name;
     }
@@ -21,7 +22,11 @@ public class RegisterRequest {
         return password;
     }
 
-    // builder (tests expect this)
+    public String getRole() {
+        return role;
+    }
+
+    // ✅ builder (tests expect role())
     public static Builder builder() {
         return new Builder();
     }
@@ -41,6 +46,12 @@ public class RegisterRequest {
 
         public Builder password(String password) {
             r.password = password;
+            return this;
+        }
+
+        // 🔴 THIS IS WHAT FIXES THE ERROR
+        public Builder role(String role) {
+            r.role = role;
             return this;
         }
 

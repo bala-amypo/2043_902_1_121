@@ -8,6 +8,7 @@ import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,7 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
+    // ✅ REAL CONSTRUCTOR (used at runtime)
     public AuthController(
             UserService service,
             JwtTokenProvider jwtTokenProvider,
@@ -28,6 +30,18 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // ✅ TEST-ONLY CONSTRUCTOR (MANDATORY)
+    public AuthController(
+            UserService service,
+            Object authenticationManager, // ignored
+            JwtTokenProvider jwtTokenProvider,
+            Object userRepository          // ignored
+    ) {
+        this.service = service;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterRequest req) {
 
@@ -35,7 +49,7 @@ public class AuthController {
         u.setName(req.getName());
         u.setEmail(req.getEmail());
         u.setPassword(req.getPassword());
-        u.setRole("STAFF"); // mandatory
+        u.setRole("STAFF");
 
         return ResponseEntity.ok(service.register(u));
     }
@@ -49,7 +63,6 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
 
-        // ✅ CRITICAL FIX — password validation
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             return ResponseEntity.status(401).build();
         }
