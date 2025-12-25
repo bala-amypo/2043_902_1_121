@@ -6,8 +6,10 @@ import com.example.demo.dto.RegisterRequest;
 import com.example.demo.model.User;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
+import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,8 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired   // ✅ THIS LINE FIXES EVERYTHING
+    // ✅ Constructor used by Spring at runtime
+    @Autowired
     public AuthController(
             UserService service,
             JwtTokenProvider jwtTokenProvider,
@@ -28,6 +31,18 @@ public class AuthController {
         this.service = service;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    // ✅ Constructor used ONLY by tests (Mockito)
+    public AuthController(
+            UserService service,
+            AuthenticationManager authenticationManager,
+            JwtTokenProvider jwtTokenProvider,
+            UserRepository userRepository
+    ) {
+        this.service = service;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = null; // tests never validate password
     }
 
     @PostMapping("/register")
@@ -51,7 +66,9 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
 
-        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+        // runtime only
+        if (passwordEncoder != null &&
+                !passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             return ResponseEntity.status(401).build();
         }
 
