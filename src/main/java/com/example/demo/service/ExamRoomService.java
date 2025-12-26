@@ -1,34 +1,13 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
 import com.example.demo.model.ExamRoom;
-import com.example.demo.repository.ExamRoomRepository;
-import com.example.demo.service.ExamRoomService;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
-@Service
-public class ExamRoomServiceImpl implements ExamRoomService {
+public interface ExamRoomService {
 
-    private final ExamRoomRepository repo;
+    ExamRoom addRoom(ExamRoom room);
 
-    public ExamRoomServiceImpl(ExamRoomRepository repo) {
-        this.repo = repo;
-    }
+    List<ExamRoom> getAllRooms();
 
-    @Override
-    public ExamRoom addRoom(ExamRoom room) {
-        room.ensureCapacityMatches();
-        return repo.save(room);
-    }
-
-    @Override
-    public List<ExamRoom> getAllRooms() {
-        return repo.findAll();
-    }
-
-    @Override
-    public List<ExamRoom> findRoomsByCapacity(int capacity) {
-        return repo.findRoomsByCapacity(capacity);
-    }
+    List<ExamRoom> findRoomsByCapacity(int capacity);
 }
