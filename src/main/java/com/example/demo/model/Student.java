@@ -23,7 +23,6 @@ public class Student {
 
     public Student() {}
 
-    // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -39,7 +38,6 @@ public class Student {
     public Integer getYear() { return year; }
     public void setYear(Integer year) { this.year = year; }
 
-    // Builder (tests depend on this)
     public static Builder builder() {
         return new Builder();
     }

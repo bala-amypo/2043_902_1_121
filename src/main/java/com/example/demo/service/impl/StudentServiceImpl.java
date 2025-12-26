@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ApiException;
 import com.example.demo.model.Student;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.StudentService;
@@ -19,24 +20,20 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student addStudent(Student student) {
 
-        if (student == null) {
-            throw new IllegalArgumentException("Student cannot be null");
+        if (student == null ||
+            student.getRollNumber() == null || student.getRollNumber().isBlank() ||
+            student.getName() == null || student.getName().isBlank() ||
+            student.getDepartment() == null || student.getDepartment().isBlank() ||
+            student.getYear() == null) {
+            throw new ApiException("Invalid student data");
         }
 
-        if (student.getRollNumber() == null || student.getRollNumber().isBlank()) {
-            throw new IllegalArgumentException("Roll number is required");
+        if (student.getYear() < 1 || student.getYear() > 4) {
+            throw new ApiException("Invalid year");
         }
 
-        if (student.getName() == null || student.getName().isBlank()) {
-            throw new IllegalArgumentException("Name is required");
-        }
-
-        if (student.getDepartment() == null || student.getDepartment().isBlank()) {
-            throw new IllegalArgumentException("Department is required");
-        }
-
-        if (student.getYear() == null || student.getYear() < 1 || student.getYear() > 4) {
-            throw new IllegalArgumentException("Invalid year");
+        if (repo.findByRollNumber(student.getRollNumber()).isPresent()) {
+            throw new ApiException("Student already exists");
         }
 
         return repo.save(student);
