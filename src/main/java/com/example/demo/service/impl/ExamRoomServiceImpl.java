@@ -7,6 +7,7 @@ import com.example.demo.service.ExamRoomService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExamRoomServiceImpl implements ExamRoomService {
@@ -20,22 +21,27 @@ public class ExamRoomServiceImpl implements ExamRoomService {
     @Override
     public ExamRoom addRoom(ExamRoom room) {
 
-        if (room == null) {
-            throw new ApiException("Invalid room");
+        // 🔴 missing fields
+        if (room.getRoomNumber() == null ||
+            room.getRows() == null ||
+            room.getColumns() == null) {
+            throw new ApiException("Invalid room data");
         }
 
-        if (room.getRows() == null || room.getRows() <= 0) {
-            throw new ApiException("Invalid rows");
+        // 🔴 negative rows / columns
+        if (room.getRows() <= 0 || room.getColumns() <= 0) {
+            throw new ApiException("Invalid room dimensions");
         }
 
-        if (room.getColumns() == null || room.getColumns() <= 0) {
-            throw new ApiException("Invalid columns");
+        // 🔴 duplicate room number
+        Optional<ExamRoom> existing =
+                repo.findByRoomNumber(room.getRoomNumber());
+
+        if (existing.isPresent()) {
+            throw new ApiException("Room number already exists");
         }
 
-        if (repo.findByRoomNumber(room.getRoomNumber()).isPresent()) {
-            throw new ApiException("Room already exists");
-        }
-
+        // capacity auto calculated
         room.ensureCapacityMatches();
         return repo.save(room);
     }
