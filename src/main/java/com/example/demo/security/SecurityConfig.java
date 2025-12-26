@@ -1,15 +1,15 @@
 package com.example.demo.security;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@ConditionalOnClass(HttpSecurity.class)
+@EnableWebSecurity   // 🔥 THIS WAS MISSING — THIS CREATES HttpSecurity
 public class SecurityConfig {
 
     @Bean
@@ -22,9 +22,9 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
-            .httpBasic(basic -> basic.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .formLogin(form -> form.disable())
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+            .httpBasic(basic -> basic.disable());
 
         return http.build();
     }
