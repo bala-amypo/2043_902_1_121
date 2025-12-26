@@ -26,13 +26,21 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     @Override
     public ExamSession createSession(ExamSession session) {
 
-        if (session == null ||
-            session.getExamDate() == null ||
-            session.getExamDate().isBefore(LocalDate.now())) {
+        // 1. Null check
+        if (session == null) {
+            throw new ApiException("Invalid exam session");
+        }
+
+        // 2. Exam date validation
+        if (session.getExamDate() == null ||
+            !session.getExamDate().isAfter(LocalDate.now())) {
+            // past OR today is invalid as per tests
             throw new ApiException("Invalid exam date");
         }
 
-        if (session.getStudents() == null || session.getStudents().isEmpty()) {
+        // 3. Students must be present
+        if (session.getStudents() == null ||
+            session.getStudents().isEmpty()) {
             throw new ApiException("Session must have students");
         }
 
@@ -41,6 +49,11 @@ public class ExamSessionServiceImpl implements ExamSessionService {
 
     @Override
     public ExamSession getSession(Long id) {
+
+        if (id == null) {
+            throw new ApiException("Session not found");
+        }
+
         return repo.findById(id)
                 .orElseThrow(() -> new ApiException("Session not found"));
     }
