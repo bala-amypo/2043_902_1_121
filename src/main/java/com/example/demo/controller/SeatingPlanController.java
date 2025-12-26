@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.exception.ApiException;
 import com.example.demo.model.SeatingPlan;
 import com.example.demo.service.SeatingPlanService;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +24,7 @@ public class SeatingPlanController {
 
     @GetMapping("/{sessionId}")
     public ResponseEntity<SeatingPlan> get(@PathVariable Long sessionId) {
-        try {
-            return ResponseEntity.ok(service.getPlan(sessionId));
-        } catch (ApiException ex) {
-            // Required by test35: return empty plan instead of error
-            return ResponseEntity.ok(new SeatingPlan());
-        }
+        return ResponseEntity.ok(service.getPlan(sessionId));
     }
 
     @GetMapping("/session/{sessionId}")
