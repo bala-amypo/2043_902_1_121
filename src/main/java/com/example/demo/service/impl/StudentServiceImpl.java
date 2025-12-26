@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ApiException;
 import com.example.demo.model.Student;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.StudentService;
@@ -25,18 +26,18 @@ public class StudentServiceImpl implements StudentService {
             student.getName() == null ||
             student.getDepartment() == null ||
             student.getYear() == null) {
-            return null;
+            throw new ApiException("Student details are incomplete");
         }
 
         if (student.getYear() < 1 || student.getYear() > 4) {
-            return null;
+            throw new ApiException("Invalid year");
         }
 
         Optional<Student> existing =
                 repo.findByRollNumber(student.getRollNumber());
 
         if (existing.isPresent()) {
-            return null;
+            throw new ApiException("Student with this roll number already exists");
         }
 
         return repo.save(student);
