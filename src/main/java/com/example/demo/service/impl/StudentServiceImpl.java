@@ -30,14 +30,14 @@ public class StudentServiceImpl implements StudentService {
         }
 
         if (student.getYear() < 1 || student.getYear() > 4) {
-            throw new ApiException("Invalid academic year");
+            throw new ApiException("Invalid year");
         }
 
         Optional<Student> existing =
                 repo.findByRollNumber(student.getRollNumber());
 
         if (existing.isPresent()) {
-            throw new ApiException("Student roll number must be unique");
+            throw new ApiException("Roll number already exists");
         }
 
         return repo.save(student);

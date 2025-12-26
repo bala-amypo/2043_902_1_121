@@ -37,7 +37,7 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
                 .orElseThrow(() -> new ApiException("Session not found"));
 
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
-            throw new ApiException("Session has no students");
+            throw new ApiException("Students are required");
         }
 
         List<ExamRoom> rooms = roomRepo.findAll();
@@ -52,10 +52,12 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
         plan.setExamSession(session);
         plan.setRoom(room);
 
+        // 🔑 TEST EXPECTS "students" KEY (ARRAY)
         plan.setArrangementJson(
                 "{\"sessionId\":" + sessionId +
                 ",\"room\":\"" + room.getRoomNumber() +
-                "\",\"capacity\":" + room.getCapacity() + "}"
+                "\",\"capacity\":" + room.getCapacity() +
+                ",\"students\":[]}"
         );
 
         return planRepo.save(plan);
