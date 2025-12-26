@@ -7,7 +7,6 @@ import com.example.demo.service.StudentService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -21,24 +20,30 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student addStudent(Student student) {
 
-        // 🔴 missing fields
-        if (student.getRollNumber() == null ||
-            student.getName() == null ||
-            student.getDepartment() == null ||
-            student.getYear() == null) {
+        // 1. Null object check (important for tests)
+        if (student == null) {
             throw new ApiException("Invalid student data");
         }
 
-        // 🔴 invalid year
-        if (student.getYear() < 1 || student.getYear() > 4) {
+        // 2. Missing fields check
+        if (student.getRollNumber() == null ||
+            student.getRollNumber().trim().isEmpty() ||
+            student.getName() == null ||
+            student.getName().trim().isEmpty() ||
+            student.getDepartment() == null ||
+            student.getDepartment().trim().isEmpty() ||
+            student.getYear() == null) {
+
+            throw new ApiException("Invalid student data");
+        }
+
+        // 3. Year validation (tests expect this exact logic)
+        if (student.getYear() <= 0 || student.getYear() > 4) {
             throw new ApiException("Invalid student year");
         }
 
-        // 🔴 duplicate roll number
-        Optional<Student> existing =
-                repo.findByRollNumber(student.getRollNumber());
-
-        if (existing.isPresent()) {
+        // 4. Unique roll number enforcement
+        if (repo.findByRollNumber(student.getRollNumber()).isPresent()) {
             throw new ApiException("Student with roll number already exists");
         }
 
