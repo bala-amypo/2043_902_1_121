@@ -3,17 +3,17 @@ package com.example.demo.service.impl;
 import com.example.demo.exception.ApiException;
 import com.example.demo.model.ExamRoom;
 import com.example.demo.repository.ExamRoomRepository;
-import com.example.demo.service.RoomService;
+import com.example.demo.service.ExamRoomService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class RoomServiceImpl implements RoomService {
+public class ExamRoomServiceImpl implements ExamRoomService {
 
     private final ExamRoomRepository repo;
 
-    public RoomServiceImpl(ExamRoomRepository repo) {
+    public ExamRoomServiceImpl(ExamRoomRepository repo) {
         this.repo = repo;
     }
 
@@ -22,6 +22,14 @@ public class RoomServiceImpl implements RoomService {
 
         if (room == null) {
             throw new ApiException("Invalid room");
+        }
+
+        if (room.getRows() == null || room.getRows() <= 0) {
+            throw new ApiException("Invalid rows");
+        }
+
+        if (room.getColumns() == null || room.getColumns() <= 0) {
+            throw new ApiException("Invalid columns");
         }
 
         if (repo.findByRoomNumber(room.getRoomNumber()).isPresent()) {
