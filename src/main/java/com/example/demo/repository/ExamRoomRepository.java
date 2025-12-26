@@ -10,9 +10,9 @@ import java.util.Optional;
 @Repository
 public interface ExamRoomRepository extends JpaRepository<ExamRoom, Long> {
 
-    //  REQUIRED BY TESTS
+    // REQUIRED BY TESTS
     Optional<ExamRoom> findByRoomNumber(String roomNumber);
 
-    //  REQUIRED BY TESTS
+    // REQUIRED BY TESTS
     List<ExamRoom> findByCapacityGreaterThanEqual(int capacity);
 }
