@@ -1,6 +1,5 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ApiException;
 import com.example.demo.model.ExamSession;
 import com.example.demo.repository.ExamSessionRepository;
 import com.example.demo.repository.StudentRepository;
@@ -27,15 +26,15 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     public ExamSession createSession(ExamSession session) {
 
         if (session == null || session.getExamDate() == null) {
-            throw new ApiException("Session details are incomplete");
+            return null;
         }
 
         if (session.getExamDate().isBefore(LocalDate.now())) {
-            throw new ApiException("Session date cannot be in the past");
+            return null;
         }
 
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
-            throw new ApiException("Students are required");
+            return null;
         }
 
         return repo.save(session);
@@ -43,8 +42,7 @@ public class ExamSessionServiceImpl implements ExamSessionService {
 
     @Override
     public ExamSession getSession(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ApiException("Session not found"));
+        return repo.findById(id).orElse(null);
     }
 
     @Override
