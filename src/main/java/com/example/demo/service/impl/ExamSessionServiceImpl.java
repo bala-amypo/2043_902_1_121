@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ApiException;
 import com.example.demo.model.ExamSession;
 import com.example.demo.repository.ExamSessionRepository;
 import com.example.demo.repository.StudentRepository;
@@ -17,8 +18,7 @@ public class ExamSessionServiceImpl implements ExamSessionService {
 
     public ExamSessionServiceImpl(
             ExamSessionRepository repo,
-            StudentRepository studentRepo
-    ) {
+            StudentRepository studentRepo) {
         this.repo = repo;
         this.studentRepo = studentRepo;
     }
@@ -26,17 +26,14 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     @Override
     public ExamSession createSession(ExamSession session) {
 
-        if (session == null) {
-            throw new IllegalArgumentException("Session cannot be null");
-        }
-
-        if (session.getExamDate() == null ||
-                session.getExamDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Exam date cannot be in the past");
+        if (session == null ||
+            session.getExamDate() == null ||
+            session.getExamDate().isBefore(LocalDate.now())) {
+            throw new ApiException("Invalid exam date");
         }
 
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
-            throw new IllegalArgumentException("Session must have at least 1 student");
+            throw new ApiException("Session must have students");
         }
 
         return repo.save(session);
@@ -44,7 +41,8 @@ public class ExamSessionServiceImpl implements ExamSessionService {
 
     @Override
     public ExamSession getSession(Long id) {
-        return repo.findById(id).orElse(null);
+        return repo.findById(id)
+                .orElseThrow(() -> new ApiException("Session not found"));
     }
 
     @Override
