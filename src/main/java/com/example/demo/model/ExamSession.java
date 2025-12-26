@@ -16,11 +16,10 @@ public class ExamSession {
     private String examTime;
 
     @ManyToMany
-    private Set<Student> students;   // ✅ MUST be Set
+    private Set<Student> students;
 
     public ExamSession() {}
 
-    // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -36,12 +35,15 @@ public class ExamSession {
     public Set<Student> getStudents() { return students; }
     public void setStudents(Set<Student> students) { this.students = students; }
 
-    // ✅ Tests expect this
     public boolean isEmpty() {
         return students == null || students.isEmpty();
     }
 
-    // ✅ Builder expected by tests
+    public boolean hasStudents() {
+        return students != null && !students.isEmpty();
+    }
+
+    // Builder
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {
