@@ -27,7 +27,6 @@ public class SeatingPlan {
 
     public SeatingPlan() {}
 
-    // getters & setters
     public Long getId(){ return id; }
     public void setId(Long id){ this.id = id; }
 
@@ -40,11 +39,10 @@ public class SeatingPlan {
     public String getArrangementJson(){ return arrangementJson; }
     public void setArrangementJson(String arrangementJson){ this.arrangementJson = arrangementJson; }
 
-    // ✅ Tests expect these
     public LocalDateTime getGeneratedAt(){ return generatedAt; }
     public void setGeneratedAt(LocalDateTime generatedAt){ this.generatedAt = generatedAt; }
 
     public boolean isEmpty() {
-        return arrangementJson == null || arrangementJson.isBlank();
+        return arrangementJson == null || arrangementJson.trim().isEmpty();
     }
 }

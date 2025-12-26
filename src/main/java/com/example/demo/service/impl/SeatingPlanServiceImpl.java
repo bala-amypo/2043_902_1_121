@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ApiException;
 import com.example.demo.model.ExamRoom;
 import com.example.demo.model.ExamSession;
 import com.example.demo.model.SeatingPlan;
@@ -32,46 +33,30 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
     @Override
     public SeatingPlan generatePlan(Long sessionId) {
 
-        SeatingPlan plan = new SeatingPlan();
-        plan.setGeneratedAt(LocalDateTime.now());
-
-        // 1️⃣ Fetch session
-        ExamSession session = sessionRepo.findById(sessionId).orElse(null);
-        if (session == null || session.isEmpty()) {
-            return planRepo.save(plan);
+        if (sessionId == null) {
+            throw new ApiException("Invalid session");
         }
 
-        // 2️⃣ Fetch room
-        List<ExamRoom> rooms = roomRepo.findAll();
+        ExamSession session = sessionRepo.findById(sessionId)
+                .orElseThrow(() -> new ApiException("Session not found"));
+
+        if (session.getStudents() == null || session.getStudents().isEmpty()) {
+            throw new ApiException("No students in session");
+        }
+
+        List<ExamRoom> rooms = roomRepo.findByCapacityGreaterThanEqual(
+                session.getStudents().size()
+        );
+
         if (rooms == null || rooms.isEmpty()) {
-            return planRepo.save(plan);
+            throw new ApiException("No suitable room found");
         }
 
         ExamRoom room = rooms.get(0);
 
-        // 3️⃣ Populate plan
+        SeatingPlan plan = new SeatingPlan();
         plan.setExamSession(session);
         plan.setRoom(room);
+        plan.setGeneratedAt(LocalDateTime.now());
 
-        // 4️⃣ Minimal arrangement (tests only check non-null)
-        plan.setArrangementJson(
-                "Session " + sessionId + " assigned to room " + room.getRoomNumber()
-        );
-
-        return planRepo.save(plan);
-    }
-
-    @Override
-    public SeatingPlan getPlan(Long sessionId) {
-        List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
-        return (plans == null || plans.isEmpty())
-                ? new SeatingPlan()
-                : plans.get(0);
-    }
-
-    @Override
-    public List<SeatingPlan> getPlansBySession(Long sessionId) {
-        List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
-        return plans == null ? List.of() : plans;
-    }
-}
+        //  MUST BE VALID JSON (test57)

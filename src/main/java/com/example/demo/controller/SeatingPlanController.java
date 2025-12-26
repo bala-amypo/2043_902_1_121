@@ -32,7 +32,7 @@ public class SeatingPlanController {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
 
-    // ✅ REQUIRED BY TEST SUITE
+    // REQUIRED BY TEST SUITE
     public ResponseEntity<List<SeatingPlan>> list(Long sessionId) {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
