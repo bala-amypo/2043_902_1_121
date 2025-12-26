@@ -7,6 +7,7 @@ import com.example.demo.service.StudentService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -20,20 +21,25 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student addStudent(Student student) {
 
-        if (student == null ||
-            student.getRollNumber() == null || student.getRollNumber().isBlank() ||
-            student.getName() == null || student.getName().isBlank() ||
-            student.getDepartment() == null || student.getDepartment().isBlank() ||
+        // 🔴 missing fields
+        if (student.getRollNumber() == null ||
+            student.getName() == null ||
+            student.getDepartment() == null ||
             student.getYear() == null) {
             throw new ApiException("Invalid student data");
         }
 
+        // 🔴 invalid year
         if (student.getYear() < 1 || student.getYear() > 4) {
-            throw new ApiException("Invalid year");
+            throw new ApiException("Invalid student year");
         }
 
-        if (repo.findByRollNumber(student.getRollNumber()).isPresent()) {
-            throw new ApiException("Student already exists");
+        // 🔴 duplicate roll number
+        Optional<Student> existing =
+                repo.findByRollNumber(student.getRollNumber());
+
+        if (existing.isPresent()) {
+            throw new ApiException("Student with roll number already exists");
         }
 
         return repo.save(student);
