@@ -13,6 +13,7 @@ public class ExamRoom {
     @Column(unique = true, nullable = false)
     private String roomNumber;
 
+    // ❗ MariaDB-safe column names
     @Column(name = "row_count", nullable = false)
     private Integer rows;
 
@@ -24,37 +25,72 @@ public class ExamRoom {
 
     public ExamRoom() {}
 
-    // 🔴 IMPORTANT: MariaDB keyword safety
+    // ✅ AUTO-CALCULATE CAPACITY (DB + SERVICE SAFE)
     @PrePersist
     @PreUpdate
-    public void syncCapacity() {
+    public void calculateCapacity() {
         ensureCapacityMatches();
     }
 
-    // ✅ REQUIRED BY TESTS + SERVICE
+    // ✅ REQUIRED BY TESTS & SERVICE
     public void ensureCapacityMatches() {
-        if (rows != null && columns != null && rows > 0 && columns > 0) {
-            this.capacity = rows * columns;
+        if (rows == null || columns == null) {
+            this.capacity = 0;
+            return;
         }
+
+        if (rows <= 0 || columns <= 0) {
+            this.capacity = 0;
+            return;
+        }
+
+        this.capacity = rows * columns;
     }
 
-    // getters & setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // ---------------- getters & setters ----------------
 
-    public String getRoomNumber() { return roomNumber; }
-    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+    public Long getId() {
+        return id;
+    }
 
-    public Integer getRows() { return rows; }
-    public void setRows(Integer rows) { this.rows = rows; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Integer getColumns() { return columns; }
-    public void setColumns(Integer columns) { this.columns = columns; }
+    public String getRoomNumber() {
+        return roomNumber;
+    }
 
-    public Integer getCapacity() { return capacity; }
-    public void setCapacity(Integer capacity) { this.capacity = capacity; }
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 
-    // ✅ Builder (tests expect this)
+    public Integer getRows() {
+        return rows;
+    }
+
+    public void setRows(Integer rows) {
+        this.rows = rows;
+    }
+
+    public Integer getColumns() {
+        return columns;
+    }
+
+    public void setColumns(Integer columns) {
+        this.columns = columns;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
+
+    // ---------------- Builder (tests expect this) ----------------
+
     public static Builder builder() {
         return new Builder();
     }
@@ -62,12 +98,33 @@ public class ExamRoom {
     public static class Builder {
         private final ExamRoom r = new ExamRoom();
 
-        public Builder id(Long v) { r.id = v; return this; }
-        public Builder roomNumber(String v) { r.roomNumber = v; return this; }
-        public Builder rows(Integer v) { r.rows = v; return this; }
-        public Builder columns(Integer v) { r.columns = v; return this; }
-        public Builder capacity(Integer v) { r.capacity = v; return this; }
+        public Builder id(Long id) {
+            r.id = id;
+            return this;
+        }
 
-        public ExamRoom build() { return r; }
+        public Builder roomNumber(String roomNumber) {
+            r.roomNumber = roomNumber;
+            return this;
+        }
+
+        public Builder rows(Integer rows) {
+            r.rows = rows;
+            return this;
+        }
+
+        public Builder columns(Integer columns) {
+            r.columns = columns;
+            return this;
+        }
+
+        public Builder capacity(Integer capacity) {
+            r.capacity = capacity;
+            return this;
+        }
+
+        public ExamRoom build() {
+            return r;
+        }
     }
 }
