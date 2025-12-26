@@ -29,6 +29,6 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 
     @Override
     public List<ExamRoom> findRoomsByCapacity(int capacity) {
-        return repo.findRoomsByCapacity(capacity);
+        return repo.findByCapacityGreaterThanEqual(capacity);
     }
 }
