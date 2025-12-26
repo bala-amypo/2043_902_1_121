@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity   // 🔥 THIS WAS MISSING — THIS CREATES HttpSecurity
+@EnableWebSecurity   // THIS WAS MISSING — THIS CREATES HttpSecurity
 public class SecurityConfig {
 
     @Bean
