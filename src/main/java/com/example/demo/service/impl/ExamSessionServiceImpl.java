@@ -1,83 +1,59 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ApiException;
-import com.example.demo.model.ExamRoom;
 import com.example.demo.model.ExamSession;
-import com.example.demo.model.SeatingPlan;
-import com.example.demo.repository.ExamRoomRepository;
 import com.example.demo.repository.ExamSessionRepository;
-import com.example.demo.repository.SeatingPlanRepository;
-import com.example.demo.service.SeatingPlanService;
+import com.example.demo.repository.StudentRepository;
+import com.example.demo.service.ExamSessionService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class SeatingPlanServiceImpl implements SeatingPlanService {
+public class ExamSessionServiceImpl implements ExamSessionService {
 
-    private final ExamSessionRepository sessionRepo;
-    private final SeatingPlanRepository planRepo;
-    private final ExamRoomRepository roomRepo;
+    private final ExamSessionRepository repo;
+    private final StudentRepository studentRepo;
 
-    public SeatingPlanServiceImpl(
-            ExamSessionRepository sessionRepo,
-            SeatingPlanRepository planRepo,
-            ExamRoomRepository roomRepo) {
-
-        this.sessionRepo = sessionRepo;
-        this.planRepo = planRepo;
-        this.roomRepo = roomRepo;
+    public ExamSessionServiceImpl(
+            ExamSessionRepository repo,
+            StudentRepository studentRepo) {
+        this.repo = repo;
+        this.studentRepo = studentRepo;
     }
 
     @Override
-    public SeatingPlan generatePlan(Long sessionId) {
+    public ExamSession createSession(ExamSession session) {
 
-        ExamSession session = sessionRepo.findById(sessionId)
-                .orElseThrow(() -> new ApiException("Session not found"));
+        if (session == null || session.getExamDate() == null) {
+            throw new ApiException("Session details are incomplete");
+        }
+
+        if (session.getExamDate().isBefore(LocalDate.now())) {
+            throw new ApiException("Session date cannot be in the past");
+        }
 
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
             throw new ApiException("Session requires students");
         }
 
-        List<ExamRoom> rooms = roomRepo.findAll();
-        if (rooms == null || rooms.isEmpty()) {
-            throw new ApiException("No rooms available");
-        }
-
-        ExamRoom room = rooms.get(0);
-
-        SeatingPlan plan = new SeatingPlan();
-        plan.setGeneratedAt(LocalDateTime.now());
-        plan.setExamSession(session);
-        plan.setRoom(room);
-
-        // ✅ include students count (required by test08)
-        plan.setArrangementJson(
-                "{\"sessionId\":" + sessionId +
-                ",\"room\":\"" + room.getRoomNumber() +
-                "\",\"capacity\":" + room.getCapacity() +
-                ",\"students\":" + session.getStudents().size() + "}"
-        );
-
-        return planRepo.save(plan);
+        return repo.save(session);
     }
 
     @Override
-    public SeatingPlan getPlan(Long sessionId) {
-
-        List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
-
-        if (plans == null || plans.isEmpty()) {
-            throw new ApiException("Seating plan not found");
-        }
-
-        return plans.get(0);
+    public ExamSession getSession(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new ApiException("Session not found"));
     }
 
     @Override
-    public List<SeatingPlan> getPlansBySession(Long sessionId) {
-        List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
-        return plans == null ? List.of() : plans;
+    public List<ExamSession> getSessionsByDate(LocalDate date) {
+        return repo.findByExamDate(date);
+    }
+
+    @Override
+    public List<ExamSession> getAllSessions() {
+        return repo.findAll();
     }
 }
