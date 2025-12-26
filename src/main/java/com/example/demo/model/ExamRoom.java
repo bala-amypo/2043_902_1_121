@@ -29,6 +29,19 @@ public class ExamRoom {
         ensureCapacityMatches();
     }
 
+    public void ensureCapacityMatches() {
+
+        if (rows == null || rows <= 0) {
+            throw new IllegalArgumentException("Rows must be positive");
+        }
+
+        if (columns == null || columns <= 0) {
+            throw new IllegalArgumentException("Columns must be positive");
+        }
+
+        this.capacity = rows * columns;
+    }
+
     // getters & setters
     public Long getId(){ return id; }
     public void setId(Long id){ this.id = id; }
@@ -45,14 +58,7 @@ public class ExamRoom {
     public Integer getCapacity(){ return capacity; }
     public void setCapacity(Integer capacity){ this.capacity = capacity; }
 
-    // ✅ Tests expect this
-    public void ensureCapacityMatches() {
-        if (rows != null && columns != null) {
-            this.capacity = rows * columns;
-        }
-    }
-
-    // ✅ Builder expected by tests
+    // Builder
     public static Builder builder(){ return new Builder(); }
 
     public static class Builder {
