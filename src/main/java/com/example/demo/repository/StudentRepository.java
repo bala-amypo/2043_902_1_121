@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    // ✅ Tests expect Optional
+    //  Tests expect Optional
     Optional<Student> findByRollNumber(String rollNumber);
 }
