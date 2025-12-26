@@ -1,14 +1,34 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.model.ExamRoom;
+import com.example.demo.repository.ExamRoomRepository;
+import com.example.demo.service.ExamRoomService;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-public interface ExamRoomService {
+@Service
+public class ExamRoomServiceImpl implements ExamRoomService {
 
-    ExamRoom addRoom(ExamRoom room);
+    private final ExamRoomRepository repo;
 
-    List<ExamRoom> getAllRooms();
+    public ExamRoomServiceImpl(ExamRoomRepository repo) {
+        this.repo = repo;
+    }
 
-    //  THIS METHOD MUST EXIST (cause of @Override error)
-    List<ExamRoom> findRoomsByCapacity(int capacity);
+    @Override
+    public ExamRoom addRoom(ExamRoom room) {
+        room.ensureCapacityMatches();
+        return repo.save(room);
+    }
+
+    @Override
+    public List<ExamRoom> getAllRooms() {
+        return repo.findAll();
+    }
+
+    @Override
+    public List<ExamRoom> findRoomsByCapacity(int capacity) {
+        return repo.findRoomsByCapacity(capacity);
+    }
 }
