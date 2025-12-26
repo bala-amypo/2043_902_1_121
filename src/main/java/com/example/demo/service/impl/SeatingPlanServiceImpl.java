@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ApiException;
 import com.example.demo.model.ExamRoom;
 import com.example.demo.model.ExamSession;
 import com.example.demo.model.SeatingPlan;
@@ -32,18 +33,16 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
     @Override
     public SeatingPlan generatePlan(Long sessionId) {
 
-        ExamSession session = sessionRepo.findById(sessionId).orElse(null);
-        if (session == null) {
-            return null;
-        }
+        ExamSession session = sessionRepo.findById(sessionId)
+                .orElseThrow(() -> new ApiException("Session not found"));
 
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
-            return null;
+            throw new ApiException("Students are required");
         }
 
         List<ExamRoom> rooms = roomRepo.findAll();
         if (rooms == null || rooms.isEmpty()) {
-            return null;
+            throw new ApiException("No rooms available");
         }
 
         ExamRoom room = rooms.get(0);
@@ -53,6 +52,7 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
         plan.setExamSession(session);
         plan.setRoom(room);
 
+        // 🔑 TEST EXPECTS "students" KEY (ARRAY)
         plan.setArrangementJson(
                 "{\"sessionId\":" + sessionId +
                 ",\"room\":\"" + room.getRoomNumber() +
@@ -65,8 +65,14 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
 
     @Override
     public SeatingPlan getPlan(Long sessionId) {
+
         List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
-        return (plans == null || plans.isEmpty()) ? null : plans.get(0);
+
+        if (plans == null || plans.isEmpty()) {
+            throw new ApiException("Seating plan not found");
+        }
+
+        return plans.get(0);
     }
 
     @Override
