@@ -71,25 +71,17 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
         return planRepo.save(plan);
     }
 
+    // ✅ FIXED: get by PLAN ID
     @Override
-    public SeatingPlan getPlan(Long sessionId) {
-
-        List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
-
-        // 🔑 REQUIRED by test09 & test55
-        if (plans == null || plans.isEmpty()) {
-            throw new ApiException("Seating plan not found");
-        }
-
-        return plans.get(0);
+    public SeatingPlan getPlan(Long planId) {
+        return planRepo.findById(planId)
+                .orElseThrow(() -> new ApiException("Seating plan not found"));
     }
 
+    // ✅ Correct: get by SESSION ID
     @Override
     public List<SeatingPlan> getPlansBySession(Long sessionId) {
-
         List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
-
-        // 🔑 MUST return empty list, not exception
         return plans == null ? List.of() : plans;
     }
 }
