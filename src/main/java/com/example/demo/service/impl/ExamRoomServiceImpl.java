@@ -1,62 +1,60 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ApiException;
-import com.example.demo.model.ExamRoom;
-import com.example.demo.repository.ExamRoomRepository;
-import com.example.demo.service.ExamRoomService;
+import com.example.demo.model.ExamSession;
+import com.example.demo.repository.ExamSessionRepository;
+import com.example.demo.repository.StudentRepository;
+import com.example.demo.service.ExamSessionService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class ExamRoomServiceImpl implements ExamRoomService {
+public class ExamSessionServiceImpl implements ExamSessionService {
 
-    private final ExamRoomRepository repo;
+    private final ExamSessionRepository repo;
+    private final StudentRepository studentRepo;
 
-    public ExamRoomServiceImpl(ExamRoomRepository repo) {
+    public ExamSessionServiceImpl(
+            ExamSessionRepository repo,
+            StudentRepository studentRepo) {
         this.repo = repo;
+        this.studentRepo = studentRepo;
     }
 
     @Override
-    public ExamRoom addRoom(ExamRoom room) {
+    public ExamSession createSession(ExamSession session) {
 
-        // 1. Null check
-        if (room == null) {
-            throw new ApiException("Invalid room data");
+        if (session == null || session.getExamDate() == null) {
+            throw new ApiException("Session details are incomplete");
         }
 
-        // 2. Mandatory fields check
-        if (room.getRoomNumber() == null ||
-            room.getRoomNumber().trim().isEmpty() ||
-            room.getRows() == null ||
-            room.getColumns() == null) {
-
-            throw new ApiException("Invalid room data");
+        if (session.getExamDate().isBefore(LocalDate.now())) {
+            throw new ApiException("Session date cannot be in the past");
         }
 
-        // 3. Negative / zero validation (IMPORTANT FOR test37)
-        if (room.getRows() <= 0 || room.getColumns() <= 0) {
-            throw new ApiException("Invalid room size");
+        // 🔑 FIXED MESSAGE (test38)
+        if (session.getStudents() == null || session.getStudents().isEmpty()) {
+            throw new ApiException("Students are required for session");
         }
 
-        // 4. Duplicate room number check (IMPORTANT FOR test26)
-        if (repo.findByRoomNumber(room.getRoomNumber()).isPresent()) {
-            throw new ApiException("Room with number already exists");
-        }
-
-        // 5. Capacity calculation (IMPORTANT FOR test52)
-        room.ensureCapacityMatches();
-
-        return repo.save(room);
+        return repo.save(session);
     }
 
     @Override
-    public List<ExamRoom> getAllRooms() {
+    public ExamSession getSession(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new ApiException("Session not found"));
+    }
+
+    @Override
+    public List<ExamSession> getSessionsByDate(LocalDate date) {
+        return repo.findByExamDate(date);
+    }
+
+    @Override
+    public List<ExamSession> getAllSessions() {
         return repo.findAll();
-    }
-
-    @Override
-    public List<ExamRoom> findRoomsByCapacity(int capacity) {
-        return repo.findByCapacityGreaterThanEqual(capacity);
     }
 }

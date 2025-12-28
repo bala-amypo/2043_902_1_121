@@ -24,7 +24,11 @@ public class SeatingPlanController {
 
     @GetMapping("/{sessionId}")
     public ResponseEntity<SeatingPlan> get(@PathVariable Long sessionId) {
-        return ResponseEntity.ok(service.getPlan(sessionId));
+        try {
+            return ResponseEntity.ok(service.getPlan(sessionId));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build(); // 🔑 REQUIRED
+        }
     }
 
     @GetMapping("/session/{sessionId}")

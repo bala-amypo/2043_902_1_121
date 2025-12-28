@@ -43,7 +43,6 @@ public class ExamSession {
         return students != null && !students.isEmpty();
     }
 
-    // Builder
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {
