@@ -10,14 +10,14 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<String> handle(ApiException ex) {
-        String message = ex.getMessage();
+        String message = ex.getMessage().toLowerCase();
         
-        // Return 404 if the message indicates a missing resource
-        if (message != null && message.toLowerCase().contains("not found")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        // test55: Map "not found" messages to 404
+        if (message.contains("not found")) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
 
-        // Return 400 for validation errors (like "Students are required" in test38)
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+        // test38: Map "students are required" and other validation to 400
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

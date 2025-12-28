@@ -18,7 +18,8 @@ public class ExamSessionController {
 
     @PostMapping
     public ResponseEntity<ExamSession> create(@RequestBody ExamSession s) {
-        // Returns 201 Created and allows RestExceptionHandler to catch errors
+        // Returns 201 Created. If service throws ApiException, 
+        // the RestExceptionHandler will catch it and return 400.
         return new ResponseEntity<>(service.createSession(s), HttpStatus.CREATED);
     }
 
