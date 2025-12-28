@@ -1,48 +1,29 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.SeatingPlan;
-import com.example.demo.service.SeatingPlanService;
+import com.example.demo.model.ExamSession;
+import com.example.demo.service.ExamSessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/seating-plans") // Updated path
-public class SeatingPlanController {
+@RequestMapping("/api/sessions")
+public class ExamSessionController {
 
-    private final SeatingPlanService service;
+    private final ExamSessionService service;
 
-    public SeatingPlanController(SeatingPlanService service) {
+    public ExamSessionController(ExamSessionService service) {
         this.service = service;
     }
 
-    // test35: Generate endpoint (Should return 201 Created)
-    @PostMapping("/{sessionId}")
-    public ResponseEntity<SeatingPlan> generate(@PathVariable Long sessionId) {
-        // Exception is handled by RestExceptionHandler
-        return new ResponseEntity<>(service.generatePlan(sessionId), HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<ExamSession> create(@RequestBody ExamSession s) {
+        // Returns 201 Created and allows RestExceptionHandler to catch errors
+        return new ResponseEntity<>(service.createSession(s), HttpStatus.CREATED);
     }
 
-    // test55: Get endpoint (Must return 404 if not found)
-    @GetMapping("/{sessionId}")
-    public ResponseEntity<SeatingPlan> get(@PathVariable Long sessionId) {
-        SeatingPlan plan = service.getPlan(sessionId);
-        if (plan == null) {
-            // This triggers test55 failure if missing
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(plan);
-    }
-
-    // test35: Requirement for listing plans
-    @GetMapping("/session/{sessionId}")
-    public ResponseEntity<List<SeatingPlan>> getBySession(@PathVariable Long sessionId) {
-        return ResponseEntity.ok(service.getPlansBySession(sessionId));
-    }
-
-    // REQUIRED BY TEST SUITE: Standard list method
-    public ResponseEntity<List<SeatingPlan>> list(Long sessionId) {
-        return ResponseEntity.ok(service.getPlansBySession(sessionId));
+    @GetMapping("/{id}")
+    public ResponseEntity<ExamSession> get(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getSession(id));
     }
 }
