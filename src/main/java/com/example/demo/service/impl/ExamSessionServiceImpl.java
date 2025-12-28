@@ -18,36 +18,27 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     private final ExamSessionRepository sessionRepo;
     private final StudentRepository studentRepo;
 
-    // REQUIRED BY TEST SUITE (DO NOT CHANGE)
-    public ExamSessionServiceImpl(
-            ExamSessionRepository sessionRepo,
-            StudentRepository studentRepo
-    ) {
+    public ExamSessionServiceImpl(ExamSessionRepository sessionRepo, StudentRepository studentRepo) {
         this.sessionRepo = sessionRepo;
         this.studentRepo = studentRepo;
     }
 
     @Override
     public ExamSession createSession(ExamSession session) {
-
-        // 🔑 test36
         if (session == null) {
             throw new ApiException("Session details are incomplete");
         }
 
-        // 🔑 test06 → PAST DATE CHECK MUST BE FIRST
-        if (session.getExamDate() != null &&
-                session.getExamDate().isBefore(LocalDate.now())) {
+        // test06: Past date check
+        if (session.getExamDate() != null && session.getExamDate().isBefore(LocalDate.now())) {
             throw new ApiException("Session date cannot be in the past");
         }
 
-        // 🔑 test38 → STUDENTS CHECK MUST COME BEFORE NULL DATE
-        Set<Student> students = session.getStudents();
-        if (students == null || students.isEmpty()) {
+        // test38: Critical validation for empty student list
+        if (session.getStudents() == null || session.getStudents().isEmpty()) {
             throw new ApiException("Students are required");
         }
 
-        // 🔑 missing date (generic validation)
         if (session.getExamDate() == null) {
             throw new ApiException("Session details are incomplete");
         }
