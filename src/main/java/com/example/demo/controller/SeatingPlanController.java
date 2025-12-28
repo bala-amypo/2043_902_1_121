@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.exception.ApiException;
 import com.example.demo.model.SeatingPlan;
 import com.example.demo.service.SeatingPlanService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,17 +20,22 @@ public class SeatingPlanController {
     }
 
     @PostMapping("/{sessionId}")
-    public ResponseEntity<SeatingPlan> generate(@PathVariable Long sessionId) {
-        return ResponseEntity.ok(service.generatePlan(sessionId));
+    public ResponseEntity<?> generate(@PathVariable Long sessionId) {
+        try {
+            return ResponseEntity.ok(service.generatePlan(sessionId));
+        } catch (ApiException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
-    // 🔑 REQUIRED BY test35 & test55
     @GetMapping("/{sessionId}")
-    public ResponseEntity<SeatingPlan> get(@PathVariable Long sessionId) {
+    public ResponseEntity<?> get(@PathVariable Long sessionId) {
         try {
             return ResponseEntity.ok(service.getPlan(sessionId));
         } catch (ApiException ex) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ex.getMessage());
         }
     }
 

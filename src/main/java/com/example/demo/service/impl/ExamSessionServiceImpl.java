@@ -18,7 +18,6 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     private final ExamSessionRepository sessionRepo;
     private final StudentRepository studentRepo;
 
-    // REQUIRED BY TEST SUITE
     public ExamSessionServiceImpl(
             ExamSessionRepository sessionRepo,
             StudentRepository studentRepo
@@ -35,20 +34,20 @@ public class ExamSessionServiceImpl implements ExamSessionService {
             throw new ApiException("Session details are incomplete");
         }
 
-        // 2️⃣ missing date
+        // 2️⃣ students REQUIRED (test38)
+        Set<Student> students = session.getStudents();
+        if (students == null || students.isEmpty()) {
+            throw new ApiException("Students are required");
+        }
+
+        // 3️⃣ missing date
         if (session.getExamDate() == null) {
             throw new ApiException("Session details are incomplete");
         }
 
-        // 3️⃣ past date (test06)
+        // 4️⃣ past date (test06)
         if (session.getExamDate().isBefore(LocalDate.now())) {
             throw new ApiException("Session date cannot be in the past");
-        }
-
-        // 4️⃣ students required (test38) 🔑 FIX HERE
-        Set<Student> students = session.getStudents();
-        if (students == null || students.isEmpty()) {
-            throw new ApiException("students are required"); // 👈 lowercase REQUIRED
         }
 
         return sessionRepo.save(session);
