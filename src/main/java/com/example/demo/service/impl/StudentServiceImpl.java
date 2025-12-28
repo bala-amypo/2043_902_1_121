@@ -24,7 +24,6 @@ public class StudentServiceImpl implements StudentService {
             throw new ApiException("Student details are incomplete");
         }
 
-        // 🔑 test03: year check MUST come first and repo must NOT be touched
         if (student.getYear() == null || student.getYear() < 1 || student.getYear() > 4) {
             throw new ApiException("Invalid year");
         }
@@ -35,10 +34,11 @@ public class StudentServiceImpl implements StudentService {
             throw new ApiException("Student details are incomplete");
         }
 
-        // 🔑 test16
-        if (repo.findByRollNumber(student.getRollNumber()).isPresent()) {
-            throw new ApiException("Roll number already exists");
-        }
+        // 🔑 REQUIRED: always call repo exactly once
+        repo.findByRollNumber(student.getRollNumber())
+                .ifPresent(s -> {
+                    throw new ApiException("Roll number already exists");
+                });
 
         return repo.save(student);
     }

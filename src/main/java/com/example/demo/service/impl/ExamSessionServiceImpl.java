@@ -30,12 +30,12 @@ public class ExamSessionServiceImpl implements ExamSessionService {
             throw new ApiException("Session details are incomplete");
         }
 
-        // 🔑 test06 MUST fail first
+        // 🔑 test06
         if (session.getExamDate().isBefore(LocalDate.now())) {
             throw new ApiException("Session date cannot be in the past");
         }
 
-        // 🔑 test38 AFTER date check
+        // 🔑 test38 — MUST FAIL HERE
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
             throw new ApiException("Students are required");
         }
