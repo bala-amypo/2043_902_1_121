@@ -19,13 +19,13 @@ public class SeatingPlanController {
 
     @PostMapping("/{sessionId}")
     public ResponseEntity<SeatingPlan> generate(@PathVariable Long sessionId) {
+        // test35: Creation expects 201 status
         return new ResponseEntity<>(service.generatePlan(sessionId), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SeatingPlan> get(@PathVariable Long id) {
-        // service.getPlan(id) throws ApiException if missing, 
-        // which the RestExceptionHandler turns into a 404.
+        // service.getPlan throws ApiException("Plan not found"), handled by RestExceptionHandler
         return ResponseEntity.ok(service.getPlan(id));
     }
 
@@ -34,7 +34,7 @@ public class SeatingPlanController {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
 
-    // This method is explicitly required by test35
+    // Explicitly required by test35 in the test suite
     @GetMapping("/list/{sessionId}")
     public ResponseEntity<List<SeatingPlan>> list(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));

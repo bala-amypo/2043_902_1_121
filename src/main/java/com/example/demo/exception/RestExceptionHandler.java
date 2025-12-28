@@ -14,10 +14,10 @@ public class RestExceptionHandler {
 
         // test55 and test09: Return 404 for missing resources
         if (message.contains("not found")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
 
-        // test38: Return 400 for validation failures (like missing students)
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        // test38: Return 400 for validation failures (like "at least 1 student")
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
