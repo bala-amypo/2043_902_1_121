@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.exception.ApiException;
 import com.example.demo.model.SeatingPlan;
 import com.example.demo.service.SeatingPlanService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,8 @@ public class SeatingPlanController {
         try {
             return ResponseEntity.ok(service.getPlan(sessionId));
         } catch (ApiException ex) {
-            return ResponseEntity.status(404).body(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ex.getMessage());
         }
     }
 
@@ -41,7 +43,7 @@ public class SeatingPlanController {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
 
-    // REQUIRED BY TEST SUITE
+    // REQUIRED BY TEST SUITE (direct call)
     public ResponseEntity<List<SeatingPlan>> list(Long sessionId) {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
