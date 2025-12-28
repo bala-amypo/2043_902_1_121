@@ -45,10 +45,10 @@ public class ExamSessionServiceImpl implements ExamSessionService {
             throw new ApiException("Session date cannot be in the past");
         }
 
-        // 4️⃣ students required (test38)
+        // 4️⃣ students required (test38) 🔑 FIX HERE
         Set<Student> students = session.getStudents();
         if (students == null || students.isEmpty()) {
-            throw new ApiException("Students are required");
+            throw new ApiException("students are required"); // 👈 lowercase REQUIRED
         }
 
         return sessionRepo.save(session);
