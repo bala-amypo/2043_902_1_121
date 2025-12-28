@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface SeatingPlanRepository extends JpaRepository<SeatingPlan, Long> {
 
-    // ✅ tests expect LIST
     List<SeatingPlan> findByExamSessionId(Long sessionId);
 }
