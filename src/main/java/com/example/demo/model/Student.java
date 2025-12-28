@@ -1,6 +1,10 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Student {
@@ -10,15 +14,21 @@ public class Student {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @NotBlank
     private String rollNumber;
 
     @Column(nullable = false)
+    @NotBlank
     private String name;
 
     @Column(nullable = false)
+    @NotBlank
     private String department;
 
     @Column(nullable = false)
+    @NotNull
+    @Min(1)
+    @Max(4)
     private Integer year;
 
     public Student() {}

@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Student;
 import com.example.demo.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Student> add(@RequestBody Student s) {
+    public ResponseEntity<Student> add(@Valid @RequestBody Student s) {
         return ResponseEntity.ok(service.addStudent(s));
     }
 
