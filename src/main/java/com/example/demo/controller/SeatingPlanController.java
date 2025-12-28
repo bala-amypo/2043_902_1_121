@@ -23,8 +23,8 @@ public class SeatingPlanController {
     public ResponseEntity<?> generate(@PathVariable Long sessionId) {
         try {
             return ResponseEntity.ok(service.generatePlan(sessionId));
-        } catch (ApiException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (ApiException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -32,10 +32,10 @@ public class SeatingPlanController {
     public ResponseEntity<?> get(@PathVariable Long sessionId) {
         try {
             return ResponseEntity.ok(service.getPlan(sessionId));
-        } catch (ApiException ex) {
+        } catch (ApiException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(ex.getMessage());
+                    .body(e.getMessage());
         }
     }
 
