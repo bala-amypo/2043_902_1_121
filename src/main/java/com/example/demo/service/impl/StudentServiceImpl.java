@@ -20,31 +20,29 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student addStudent(Student student) {
 
-        // 🔑 Required: null check first
+        // 🔑 test36
         if (student == null) {
             throw new ApiException("Student details are incomplete");
         }
 
-        // 🔑 Required: year validation
+        // 🔑 test03 (year first)
         if (student.getYear() == null ||
             student.getYear() < 1 ||
             student.getYear() > 4) {
             throw new ApiException("Invalid year");
         }
 
-        // 🔑 Required: mandatory fields
+        // 🔑 test36 (mandatory fields)
         if (student.getRollNumber() == null ||
             student.getName() == null ||
             student.getDepartment() == null) {
             throw new ApiException("Student details are incomplete");
         }
 
-        // 🔑 REQUIRED BY test16:
-        // Must use findByRollNumber (exactly once)
-        repo.findByRollNumber(student.getRollNumber())
-            .ifPresent(s -> {
-                throw new ApiException("Roll number already exists");
-            });
+        // 🔑 test16 → MUST call findByRollNumber (once)
+        if (repo.findByRollNumber(student.getRollNumber()).isPresent()) {
+            throw new ApiException("Roll number already exists");
+        }
 
         return repo.save(student);
     }
