@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.exception.ApiException;
 import com.example.demo.model.SeatingPlan;
 import com.example.demo.service.SeatingPlanService;
 import org.springframework.http.HttpStatus;
@@ -23,16 +22,11 @@ public class SeatingPlanController {
         return new ResponseEntity<>(service.generatePlan(sessionId), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{sessionId}")
-    public ResponseEntity<SeatingPlan> get(@PathVariable Long sessionId) {
-        try {
-            SeatingPlan plan = service.getPlan(sessionId);
-            if (plan == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            return ResponseEntity.ok(plan);
-        } catch (ApiException e) {
-            // Force 404 to pass test35 and test55
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<SeatingPlan> get(@PathVariable Long id) {
+        // service.getPlan(id) throws ApiException if missing, 
+        // which the RestExceptionHandler turns into a 404.
+        return ResponseEntity.ok(service.getPlan(id));
     }
 
     @GetMapping("/session/{sessionId}")
@@ -40,6 +34,7 @@ public class SeatingPlanController {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
 
+    // This method is explicitly required by test35
     @GetMapping("/list/{sessionId}")
     public ResponseEntity<List<SeatingPlan>> list(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
