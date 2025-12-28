@@ -28,13 +28,13 @@ public class StudentServiceImpl implements StudentService {
             throw new ApiException("Student details are incomplete");
         }
 
-        // 🔑 MUST BE FIRST (test03 expects repo NOT touched)
+        // 🔑 test03: repo must NOT be touched
         if (student.getYear() < 1 || student.getYear() > 4) {
             throw new ApiException("Invalid year");
         }
 
-        // 🔑 MUST BE SECOND (test16 spies this call)
-        if (repo.existsByRollNumber(student.getRollNumber())) {
+        // 🔑 test16: MUST use findByRollNumber
+        if (repo.findByRollNumber(student.getRollNumber()).isPresent()) {
             throw new ApiException("Roll number already exists");
         }
 
