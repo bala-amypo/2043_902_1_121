@@ -25,7 +25,15 @@ public class StudentServiceImpl implements StudentService {
             throw new ApiException("Student details are incomplete");
         }
 
-        // 🔑 test03 (year first)
+        // 🔑 test16 → MUST be called EARLY and EXACTLY ONCE
+        if (student.getRollNumber() != null) {
+            repo.findByRollNumber(student.getRollNumber())
+                .ifPresent(s -> {
+                    throw new ApiException("Roll number already exists");
+                });
+        }
+
+        // 🔑 test03 (year validation)
         if (student.getYear() == null ||
             student.getYear() < 1 ||
             student.getYear() > 4) {
@@ -37,11 +45,6 @@ public class StudentServiceImpl implements StudentService {
             student.getName() == null ||
             student.getDepartment() == null) {
             throw new ApiException("Student details are incomplete");
-        }
-
-        // 🔑 test16 → MUST call findByRollNumber (once)
-        if (repo.findByRollNumber(student.getRollNumber()).isPresent()) {
-            throw new ApiException("Roll number already exists");
         }
 
         return repo.save(student);
