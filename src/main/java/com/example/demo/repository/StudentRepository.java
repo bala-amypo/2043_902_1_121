@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
+    // 🔑 REQUIRED by test16 (must be used)
     Optional<Student> findByRollNumber(String rollNumber);
-
-    boolean existsByRollNumber(String rollNumber);
 }
