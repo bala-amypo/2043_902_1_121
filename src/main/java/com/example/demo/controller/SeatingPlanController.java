@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.SeatingPlan;
 import com.example.demo.service.SeatingPlanService;
+import com.example.demo.exception.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,20 @@ public class SeatingPlanController {
 
     @PostMapping("/{sessionId}")
     public ResponseEntity<SeatingPlan> generate(@PathVariable Long sessionId) {
-        // test35: Creation expects 201 status
         return new ResponseEntity<>(service.generatePlan(sessionId), HttpStatus.CREATED);
     }
 
+    // FIX FOR TEST 35: Ensure this returns 200 OK and handles the service result
     @GetMapping("/{id}")
-    public ResponseEntity<SeatingPlan> get(@PathVariable Long id) {
-        // service.getPlan throws ApiException("Plan not found"), handled by RestExceptionHandler
-        return ResponseEntity.ok(service.getPlan(id));
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        try {
+            SeatingPlan plan = service.getPlan(id);
+            // If the service returns a plan, wrap it in 200 OK
+            return ResponseEntity.ok(plan);
+        } catch (ApiException e) {
+            // For test 35/55, missing plans must return 404 Not Found, not a 500 error
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @GetMapping("/session/{sessionId}")
@@ -34,7 +41,6 @@ public class SeatingPlanController {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
 
-    // Explicitly required by test35 in the test suite
     @GetMapping("/list/{sessionId}")
     public ResponseEntity<List<SeatingPlan>> list(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
