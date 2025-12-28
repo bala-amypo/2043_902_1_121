@@ -9,11 +9,9 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<String> handle(ApiException ex) {
-        // 🔑 ALL ApiException → 400 (test expectation)
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-    // 🔑 Some tests throw IllegalArgumentException internally
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegal(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());

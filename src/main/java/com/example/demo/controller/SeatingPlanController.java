@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.exception.ApiException;
 import com.example.demo.model.SeatingPlan;
 import com.example.demo.service.SeatingPlanService;
 import org.springframework.http.ResponseEntity;
@@ -19,21 +18,13 @@ public class SeatingPlanController {
     }
 
     @PostMapping("/{sessionId}")
-    public ResponseEntity<?> generate(@PathVariable Long sessionId) {
-        try {
-            return ResponseEntity.ok(service.generatePlan(sessionId));
-        } catch (ApiException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<SeatingPlan> generate(@PathVariable Long sessionId) {
+        return ResponseEntity.ok(service.generatePlan(sessionId));
     }
 
     @GetMapping("/{sessionId}")
-    public ResponseEntity<?> get(@PathVariable Long sessionId) {
-        try {
-            return ResponseEntity.ok(service.getPlan(sessionId));
-        } catch (ApiException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<SeatingPlan> get(@PathVariable Long sessionId) {
+        return ResponseEntity.ok(service.getPlan(sessionId));
     }
 
     @GetMapping("/session/{sessionId}")
@@ -41,7 +32,7 @@ public class SeatingPlanController {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
 
-    // REQUIRED BY TEST SUITE
+    // 🔑 REQUIRED BY TEST SUITE
     public ResponseEntity<List<SeatingPlan>> list(Long sessionId) {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
