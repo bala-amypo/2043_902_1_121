@@ -15,7 +15,12 @@ public class ExamSession {
     private LocalDate examDate;
     private String examTime;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "session_students",
+        joinColumns = @JoinColumn(name = "session_id"),
+        inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
     private Set<Student> students;
 
     public ExamSession() {}
@@ -24,21 +29,18 @@ public class ExamSession {
     public void setId(Long id) { this.id = id; }
 
     public String getCourseCode() { return courseCode; }
-    public void setCourseCode(String courseCode) { this.courseCode = courseCode; }
+    public void setCourseCode(String v) { this.courseCode = v; }
 
     public LocalDate getExamDate() { return examDate; }
-    public void setExamDate(LocalDate examDate) { this.examDate = examDate; }
+    public void setExamDate(LocalDate v) { this.examDate = v; }
 
     public String getExamTime() { return examTime; }
-    public void setExamTime(String examTime) { this.examTime = examTime; }
+    public void setExamTime(String v) { this.examTime = v; }
 
     public Set<Student> getStudents() { return students; }
-    public void setStudents(Set<Student> students) { this.students = students; }
+    public void setStudents(Set<Student> v) { this.students = v; }
 
-    public boolean isEmpty() {
-        return students == null || students.isEmpty();
-    }
-
+    // Helper for validation logic
     public boolean hasStudents() {
         return students != null && !students.isEmpty();
     }
@@ -47,13 +49,11 @@ public class ExamSession {
 
     public static class Builder {
         private final ExamSession e = new ExamSession();
-
         public Builder id(Long v) { e.id = v; return this; }
         public Builder courseCode(String v) { e.courseCode = v; return this; }
         public Builder examDate(LocalDate v) { e.examDate = v; return this; }
         public Builder examTime(String v) { e.examTime = v; return this; }
         public Builder students(Set<Student> v) { e.students = v; return this; }
-
         public ExamSession build() { return e; }
     }
 }
