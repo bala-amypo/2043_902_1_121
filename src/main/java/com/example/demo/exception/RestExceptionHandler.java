@@ -11,17 +11,12 @@ public class RestExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<String> handle(ApiException ex) {
 
-        // 🔑 Ensure message is NEVER null (required by tests)
-        String message = ex.getMessage() != null
-                ? ex.getMessage()
-                : "Request failed";
+        String message = ex.getMessage();
 
-        // 🔑 test09, test35, test55 → 404 mapping
-        if (message.toLowerCase().contains("not found")) {
+        if (message != null && message.toLowerCase().contains("not found")) {
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
 
-        // 🔑 all validation & business errors → 400
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }
