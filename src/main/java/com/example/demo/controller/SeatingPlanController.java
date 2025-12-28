@@ -17,13 +17,11 @@ public class SeatingPlanController {
         this.service = service;
     }
 
-    // 🔑 test35
     @PostMapping("/{sessionId}")
     public ResponseEntity<SeatingPlan> generate(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.generatePlan(sessionId));
     }
 
-    // 🔑 test09 + test55 (404 handled by RestExceptionHandler)
     @GetMapping("/{sessionId}")
     public ResponseEntity<SeatingPlan> get(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.getPlan(sessionId));
@@ -34,7 +32,7 @@ public class SeatingPlanController {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
 
-    // 🔑 REQUIRED BY TEST SUITE (reflection-based)
+    // REQUIRED BY TEST SUITE
     public ResponseEntity<List<SeatingPlan>> list(Long sessionId) {
         return ResponseEntity.ok(service.getPlansBySession(sessionId));
     }
