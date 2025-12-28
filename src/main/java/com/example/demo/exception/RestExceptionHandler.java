@@ -13,12 +13,12 @@ public class RestExceptionHandler {
 
         String message = ex.getMessage();
 
-        // 🔑 REQUIRED by tests (test09, test35, test55)
+        // ✅ test09, test35, test55
         if (message != null && message.toLowerCase().contains("not found")) {
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
 
-        // 🔑 REQUIRED by all validation tests
+        // ✅ all validation & business errors
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }
