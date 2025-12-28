@@ -18,7 +18,7 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     private final ExamSessionRepository sessionRepo;
     private final StudentRepository studentRepo;
 
-    // 🔑 REQUIRED BY TEST SUITE (DO NOT CHANGE)
+    // 🔑 REQUIRED by test suite (DO NOT CHANGE)
     public ExamSessionServiceImpl(
             ExamSessionRepository sessionRepo,
             StudentRepository studentRepo
@@ -30,20 +30,21 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     @Override
     public ExamSession createSession(ExamSession session) {
 
-        // 🔑 null check
+        // null session
         if (session == null) {
             throw new ApiException("Session details are incomplete");
         }
 
-        // 🔑 past date validation (test06)
-        if (session.getDate() == null || session.getDate().isBefore(LocalDate.now())) {
-            throw new ApiException("Session date must be in the future");
+        // exam date validation (test06)
+        if (session.getExamDate() == null ||
+                session.getExamDate().isBefore(LocalDate.now())) {
+            throw new ApiException("Session date cannot be in the past");
         }
 
-        // 🔑 students required (test38)
+        // students required (test38)
         Set<Student> students = session.getStudents();
         if (students == null || students.isEmpty()) {
-            throw new ApiException("Session must have students");
+            throw new ApiException("Students are required");
         }
 
         return sessionRepo.save(session);
@@ -57,6 +58,12 @@ public class ExamSessionServiceImpl implements ExamSessionService {
 
     @Override
     public List<ExamSession> getSessionsByDate(LocalDate date) {
-        return sessionRepo.findByDate(date);
+        return sessionRepo.findByExamDate(date);
+    }
+
+    // 🔑 REQUIRED BY INTERFACE
+    @Override
+    public List<ExamSession> getAllSessions() {
+        return sessionRepo.findAll();
     }
 }
