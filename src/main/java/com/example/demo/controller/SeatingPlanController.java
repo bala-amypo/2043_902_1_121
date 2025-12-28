@@ -17,13 +17,11 @@ public class SeatingPlanController {
         this.service = service;
     }
 
-    // 🔑 DO NOT catch exceptions
     @PostMapping("/{sessionId}")
     public ResponseEntity<SeatingPlan> generate(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.generatePlan(sessionId));
     }
 
-    // 🔑 NOT FOUND must propagate
     @GetMapping("/{sessionId}")
     public ResponseEntity<SeatingPlan> get(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.getPlan(sessionId));
