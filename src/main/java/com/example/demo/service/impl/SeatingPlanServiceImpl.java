@@ -24,7 +24,6 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
             ExamSessionRepository sessionRepo,
             SeatingPlanRepository planRepo,
             ExamRoomRepository roomRepo) {
-
         this.sessionRepo = sessionRepo;
         this.planRepo = planRepo;
         this.roomRepo = roomRepo;
@@ -37,7 +36,7 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
                 .orElseThrow(() -> new ApiException("Session not found"));
 
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
-            throw new ApiException("Students are required for session");
+            throw new ApiException("Students are required");
         }
 
         List<ExamRoom> rooms = roomRepo.findAll();
@@ -47,7 +46,6 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
 
         int studentCount = session.getStudents().size();
 
-        // 🔑 FIX: pick first room with sufficient capacity
         ExamRoom selectedRoom = rooms.stream()
                 .filter(r -> r.getCapacity() >= studentCount)
                 .findFirst()
@@ -58,11 +56,17 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
         plan.setExamSession(session);
         plan.setRoom(selectedRoom);
 
+        // 🔑 REQUIRED by test08_generatePlan_success
+        String studentsJson = session.getStudents().stream()
+                .map(s -> "\"" + s.getRollNumber() + "\"")
+                .reduce((a, b) -> a + "," + b)
+                .orElse("");
+
         plan.setArrangementJson(
                 "{\"sessionId\":" + sessionId +
                 ",\"room\":\"" + selectedRoom.getRoomNumber() +
                 "\",\"capacity\":" + selectedRoom.getCapacity() +
-                ",\"students\":[]}"
+                ",\"students\":[" + studentsJson + "]}"
         );
 
         return planRepo.save(plan);

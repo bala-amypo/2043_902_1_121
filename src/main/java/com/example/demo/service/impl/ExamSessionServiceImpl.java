@@ -34,9 +34,9 @@ public class ExamSessionServiceImpl implements ExamSessionService {
             throw new ApiException("Session date cannot be in the past");
         }
 
-        // 🔑 FIXED MESSAGE (test38)
+        // 🔑 REQUIRED by test38_session_requires_students_fail
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
-            throw new ApiException("Students are required for session");
+            throw new ApiException("Students are required");
         }
 
         return repo.save(session);

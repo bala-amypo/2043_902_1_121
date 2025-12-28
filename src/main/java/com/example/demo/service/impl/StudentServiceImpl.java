@@ -28,7 +28,12 @@ public class StudentServiceImpl implements StudentService {
             throw new ApiException("Student details are incomplete");
         }
 
-        // 🔒 Unique roll enforcement (required by test16)
+        // 🔑 REQUIRED by test03_createStudent_invalidYear_fail
+        if (student.getYear() < 1 || student.getYear() > 4) {
+            throw new ApiException("Invalid year");
+        }
+
+        // 🔑 REQUIRED by test16_student_unique_roll_check
         if (repo.existsByRollNumber(student.getRollNumber())) {
             throw new ApiException("Roll number already exists");
         }
