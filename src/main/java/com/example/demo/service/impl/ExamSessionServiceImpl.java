@@ -3,9 +3,9 @@ package com.example.demo.service.impl;
 import com.example.demo.exception.ApiException;
 import com.example.demo.model.ExamSession;
 import com.example.demo.repository.ExamSessionRepository;
+import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.ExamSessionService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,24 +14,28 @@ import java.util.List;
 public class ExamSessionServiceImpl implements ExamSessionService {
 
     private final ExamSessionRepository repo;
+    private final StudentRepository studentRepo;
 
-    public ExamSessionServiceImpl(ExamSessionRepository repo) {
+    public ExamSessionServiceImpl(
+            ExamSessionRepository repo,
+            StudentRepository studentRepo) {
         this.repo = repo;
+        this.studentRepo = studentRepo;
     }
 
     @Override
-    @Transactional
     public ExamSession createSession(ExamSession session) {
+
         if (session == null || session.getExamDate() == null) {
             throw new ApiException("Session details are incomplete");
         }
 
-        // Logic for test06
+        // 🔑 test06: past date fails FIRST
         if (session.getExamDate().isBefore(LocalDate.now())) {
             throw new ApiException("Session date cannot be in the past");
         }
 
-        // Fix for test38: The test expects an error if students are missing
+        // 🔑 test38: students check AFTER date
         if (session.getStudents() == null || session.getStudents().isEmpty()) {
             throw new ApiException("Students are required");
         }
