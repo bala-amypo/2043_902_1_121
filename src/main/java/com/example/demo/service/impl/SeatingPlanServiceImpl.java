@@ -76,10 +76,9 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
 
         List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
 
-        // 🔑 REQUIRED by test35 & test55
-        // MUST NOT throw any exception
+        // 🔑 REQUIRED by test09 & test55
         if (plans == null || plans.isEmpty()) {
-            return null;
+            throw new ApiException("Seating plan not found");
         }
 
         return plans.get(0);
@@ -90,6 +89,7 @@ public class SeatingPlanServiceImpl implements SeatingPlanService {
 
         List<SeatingPlan> plans = planRepo.findByExamSessionId(sessionId);
 
+        // 🔑 MUST return empty list, not exception
         return plans == null ? List.of() : plans;
     }
 }

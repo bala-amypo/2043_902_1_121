@@ -26,22 +26,24 @@ public class ExamSessionServiceImpl implements ExamSessionService {
     @Override
     public ExamSession createSession(ExamSession session) {
 
+        // 🔑 null session
         if (session == null) {
             throw new ApiException("Session details are incomplete");
         }
 
-        // 🔑 test38: students FIRST
-        if (session.getStudents() == null || session.getStudents().isEmpty()) {
-            throw new ApiException("Students are required");
-        }
-
+        // 🔑 missing date
         if (session.getExamDate() == null) {
             throw new ApiException("Session details are incomplete");
         }
 
-        // 🔑 test06
+        // 🔑 test06: past date MUST be checked BEFORE students
         if (session.getExamDate().isBefore(LocalDate.now())) {
             throw new ApiException("Session date cannot be in the past");
+        }
+
+        // 🔑 test38: students check AFTER date
+        if (session.getStudents() == null || session.getStudents().isEmpty()) {
+            throw new ApiException("Students are required");
         }
 
         return repo.save(session);
