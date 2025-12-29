@@ -25,7 +25,7 @@ public class ExamRoom {
 
     public ExamRoom() {}
 
-    // ✅ AUTO-CALCULATE CAPACITY (DB + SERVICE SAFE)
+    //  AUTO-CALCULATE CAPACITY (DB + SERVICE SAFE)
     @PrePersist
     @PreUpdate
     public void calculateCapacity() {
